@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0B2545">
+<title>アクアリンク 対応ナビ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B2545; --deep:#13315C; --blue:#1C7293; --accent:#E8A020; --teal:#2A9D8F;
+  --bg:#eef2f6; --card:#ffffff; --ink:#15233a; --ink2:#5c708a; --ink3:#93a4ba;
+  --line:#e4ebf2; --line2:#d3dde8;
+  --okbg:#e9f6f3; --okline:#bfe5dd;
+  --warnbg:#fdf3e7; --warn:#bd6b1c; --warnline:#f0d6ac;
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--ink);font-family:'Zen Kaku Gothic New',sans-serif;-webkit-text-size-adjust:100%;}
+body{padding-bottom:40px;line-height:1.65;}
+.wrap{max-width:640px;margin:0 auto;padding:0 12px;}
+.hdr{background:var(--navy);color:#fff;padding:13px 0 12px;position:sticky;top:0;z-index:30;box-shadow:0 1px 8px rgba(11,37,69,.18);}
+.hdr .wrap{display:flex;align-items:center;gap:9px;}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.hdr-t{font-size:15px;font-weight:900;letter-spacing:.02em;}
+.hdr-s{font-size:10px;color:#9ec2d6;margin-top:1px;}
+.hdr-cnt{margin-left:auto;font-size:10px;color:#9ec2d6;text-align:right;line-height:1.3;}
+.hdr-cnt b{color:var(--accent);font-size:14px;font-weight:700;}
+.searchbar{background:var(--navy);padding:0 0 12px;position:sticky;top:55px;z-index:29;}
+.search{position:relative;}
+.search input{width:100%;padding:13px 40px 13px 42px;border:none;border-radius:11px;font-size:16px;font-family:inherit;background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.12);}
+.search input:focus{outline:2px solid var(--teal);}
+.search .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--ink3);}
+.search .clr{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:none;background:var(--line);border-radius:50%;color:var(--ink2);font-size:15px;cursor:pointer;display:none;}
+.search .clr.show{display:block;}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:11px 0 3px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{white-space:nowrap;font-size:13px;font-weight:500;padding:7px 13px;border-radius:99px;border:1px solid var(--line2);background:#fff;color:var(--ink2);cursor:pointer;flex-shrink:0;font-family:inherit;display:flex;align-items:center;gap:6px;}
+.chip .dot{width:8px;height:8px;border-radius:50%;}
+.chip.active{color:#fff;border-color:transparent;}
+.cnt{font-size:11px;color:var(--ink3);padding:11px 3px 4px;font-weight:500;}
+/* VIEW TOGGLE */
+.vtog{display:flex;gap:4px;background:rgba(255,255,255,.12);border-radius:10px;padding:3px;margin-bottom:10px;}
+.vtog button{flex:1;border:none;background:none;color:#cfe0ea;font-family:inherit;font-size:13px;font-weight:700;padding:8px 0;border-radius:8px;cursor:pointer;}
+.vtog button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.15);}
+/* QUOTE TABLE */
+.qt{margin-top:0;border:1px solid #e6d3b0;border-radius:11px;overflow:hidden;background:#fffaf2;}
+.qt-hd{background:#faf0dc;padding:7px 12px;font-size:11px;color:var(--warn);font-weight:700;display:flex;justify-content:space-between;}
+.qt-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-top:1px solid #f0e2c6;}
+.qt-nm{flex:1;min-width:0;font-size:12.5px;color:var(--ink);line-height:1.4;}
+.qt-up{font-size:9px;color:#fff;background:#d2691e;border-radius:4px;padding:1px 5px;margin-left:5px;white-space:nowrap;font-weight:700;}
+.qt-pr{text-align:right;flex-shrink:0;}
+.qt-genka{font-size:11px;color:var(--ink3);}
+.qt-teiji{font-size:14px;color:var(--warn);font-weight:900;}
+.qt-lbl{font-size:9px;color:var(--ink3);}
+.qt-note{font-size:10.5px;color:var(--ink3);padding:8px 12px;border-top:1px solid #f0e2c6;line-height:1.5;}
+/* PRODUCT (mitsu) ROW */
+.prow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:7px;}
+.pcat{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;background:#eef2f6;color:var(--ink2);white-space:nowrap;align-self:flex-start;}
+.pnm{flex:1;min-width:0;font-size:13px;color:var(--ink);line-height:1.45;font-weight:500;}
+.pup{font-size:9px;color:#fff;background:#d2691e;border-radius:4px;padding:1px 5px;margin-left:5px;white-space:nowrap;font-weight:700;}
+.pbk{font-size:10px;color:var(--ink3);margin-top:3px;line-height:1.3;}
+.ppr{text-align:right;flex-shrink:0;}
+.pg{font-size:11px;color:var(--ink3);}
+.pt{font-size:15px;color:var(--warn);font-weight:900;}
+.pl{font-size:9px;color:var(--ink3);}
+.mitsu-note{background:#eef4f8;border:1px solid #d4e3ee;border-radius:10px;padding:10px 13px;font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:10px;}
+.mitsu-note b{color:var(--blue);}
+/* COMPANY INFO */
+.info-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;box-shadow:0 1px 2px rgba(11,37,69,.05);}
+.info-card.hl{border:1.5px solid var(--teal);background:#f3fbf9;}
+.ic-l{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:5px;display:flex;align-items:center;gap:6px;}
+.ic-row{display:flex;align-items:flex-start;gap:10px;}
+.ic-v{flex:1;min-width:0;font-size:14px;color:var(--ink);line-height:1.65;font-weight:500;word-break:break-all;}
+.ic-v .sub{font-size:11px;color:var(--ink3);font-weight:400;}
+.ic-copy{flex-shrink:0;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;}
+.ic-copy:active{transform:scale(.95);}
+.ic-copy.done{background:var(--teal);}
+.info-name{font-size:18px;font-weight:900;color:var(--navy);text-align:center;padding:6px 0 12px;}
+.info-tel{display:flex;gap:8px;}
+.info-tel a{flex:1;text-align:center;background:var(--teal);color:#fff;text-decoration:none;border-radius:10px;padding:11px 0;font-weight:700;font-size:14px;}
+.info-tel a.fax{background:var(--ink2);}
+
+.item{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:9px;overflow:hidden;box-shadow:0 1px 2px rgba(11,37,69,.05);}
+.item-head{display:flex;align-items:flex-start;gap:11px;padding:14px 14px;cursor:pointer;user-select:none;}
+.item-head:active{background:#f7fafc;}
+.qbar{width:4px;align-self:stretch;border-radius:3px;flex-shrink:0;}
+.item-main{flex:1;min-width:0;}
+.item-cat{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:5px;}
+.item-q{font-size:15px;font-weight:700;color:var(--ink);line-height:1.45;}
+.item-q .quote{color:var(--ink3);font-weight:900;}
+.chev{color:var(--ink3);font-size:14px;flex-shrink:0;transition:transform .25s;margin-top:3px;}
+.chev.open{transform:rotate(90deg);}
+.detail{display:none;padding:0 14px 16px;}
+.detail.open{display:block;}
+.sec{margin-top:14px;}
+.sec-l{font-size:11px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.sec-l .b{width:3px;height:14px;border-radius:2px;}
+.ans{background:#f3f8fb;border:1px solid #d8e7f0;border-left:3px solid var(--blue);border-radius:9px;padding:11px 13px;font-size:14px;color:var(--ink);line-height:1.7;}
+.ans b{color:var(--blue);}
+.script{background:var(--okbg);border:1px solid var(--okline);border-radius:11px;padding:11px 12px 12px;margin-bottom:8px;position:relative;}
+.script-l{font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px;padding-right:78px;}
+.script-t{font-size:14px;color:var(--ink);line-height:1.85;white-space:pre-wrap;}
+.copy-btn{position:absolute;top:9px;right:9px;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(42,157,143,.4);}
+.copy-btn:active{transform:scale(.95);}
+.copy-btn.done{background:var(--deep);}
+.notes{background:var(--warnbg);border:1px solid var(--warnline);border-radius:11px;padding:11px 13px;}
+.note{font-size:13px;color:var(--ink);line-height:1.7;display:flex;gap:8px;margin-bottom:6px;}
+.note:last-child{margin-bottom:0;}
+.note .m{color:var(--warn);font-weight:900;flex-shrink:0;}
+.note.do .m{color:var(--teal);}
+.note b{color:var(--ink);}
+.esc{margin-top:0;background:#fef0ef;border:1px solid #f6cfca;border-radius:10px;padding:9px 12px;font-size:13px;color:#a23b2d;display:flex;gap:8px;align-items:flex-start;}
+.esc .m{font-weight:900;flex-shrink:0;}
+.esc b{color:#7d2a20;}
+.refs-toggle{margin-top:10px;font-size:12px;color:var(--blue);background:none;border:none;font-family:inherit;cursor:pointer;padding:4px 0;font-weight:700;display:flex;align-items:center;gap:5px;}
+.refs{display:none;margin-top:6px;}
+.refs.open{display:block;}
+.ref{font-size:12px;background:#f7fafc;border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:6px;padding:8px 10px;margin-bottom:5px;color:var(--ink);}
+.ref .tag{font-size:10px;color:#fff;background:var(--blue);padding:1px 7px;border-radius:99px;margin-right:6px;white-space:nowrap;}
+.alt{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.alt-c{font-size:11px;color:var(--ink2);background:#eef2f6;border:1px solid var(--line);border-radius:99px;padding:3px 9px;}
+.nores{text-align:center;color:var(--ink3);font-size:14px;padding:46px 16px;}
+.nores .big{font-size:30px;margin-bottom:8px;}
+.hl{background:#fff09e;border-radius:3px;padding:0 1px;}
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--navy);color:#fff;font-size:13px;font-weight:700;padding:10px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:all .25s;z-index:99;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.foot{text-align:center;font-size:10.5px;color:var(--ink3);margin-top:18px;line-height:1.7;padding:0 16px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="wrap">
+    <div class="logo">🐟</div>
+    <div>
+      <div class="hdr-t">対応ナビ</div>
+      <div class="hdr-s">お客様対応を、その場で検索</div>
+    </div>
+    <div class="hdr-cnt"><b id="cntN">0</b><br>トピック</div>
+  </div>
+</div>
+
+<div class="searchbar">
+  <div class="wrap">
+    <div class="vtog" id="vtog">
+      <button data-v="navi" class="on">📞 対応</button>
+      <button data-v="mitsu">💴 見積</button>
+      <button data-v="info">🏢 会社情報</button>
+    </div>
+    <div class="search">
+      <span class="ic">🔍</span>
+      <input id="q" type="text" inputmode="search" placeholder="例：魚 死んだ / ポンプ 止まった / 停電 / 請求">
+      <button class="clr" id="clr">×</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="chips" id="chips"></div>
+  <div class="cnt" id="cnt"></div>
+  <div id="list"></div>
+  <div class="nores" id="nores" style="display:none;">
+    <div class="big">🔍</div>
+    見つかりませんでした。<br>別のキーワードでお試しください。
+  </div>
+  <div class="foot">アクアリンク 対応ナビ ｜ 社内用 v6<br>金額・条件は各お客様の個別契約を必ずご確認ください。</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS=[
+ {id:"gyo",    name:"生体（魚）",   c:"#E2574C"},
+ {id:"kusa",   name:"水草・水質",   c:"#2A9D8F"},
+ {id:"setsubi",name:"設備・機械",   c:"#1C7293"},
+ {id:"saigai", name:"環境・災害",   c:"#E07B39"},
+ {id:"kane",   name:"料金・支払",   c:"#D38A12"},
+ {id:"keiyaku",name:"契約・解約",   c:"#9163A8"},
+ {id:"jimu",   name:"事務・依頼",   c:"#6b7e96"},
+];
+const CC=Object.fromEntries(CATS.map(c=>[c.id,c.c]));
+const PRODUCTS=[
+// ── 水槽 ──
+{c:"水槽",n:"既製品　ガラス水槽300＊300＊500H　フタ付",g:5000,bk:"水槽満水時45kg"},
+{c:"水槽",n:"既製品　ガラス水槽300＊300＊500H　フタ付",g:6600,bk:"水槽満水時45kg"},
+{c:"水槽",n:"既製品　ガラス水槽300＊300＊500H　フタ付",g:9750,bk:"水槽満水時45kg"},
+{c:"水槽",n:"既製品　アクロ 水槽台 30×30×70 穴有り 黒 30cmOF水槽　フタ付",g:23600,bk:"水槽満水時45kg"},
+{c:"水槽",n:"ハイタイプ30cm水槽 オーバーフローセット クロミス30H+",g:39800,bk:"水槽満水時45kg"},
+{c:"水槽",n:"既製品　ガラス水槽 アクロ45 　450×270×300H　フタ付",g:6750,bk:"水槽満水時32kg"},
+{c:"水槽",n:"既製品　ガラス水槽 アクロ45ハイ 　450×300×400H　フタ付",g:11200,bk:"水槽満水時50kg"},
+{c:"水槽",n:"既製品　ガラス水槽 アクロ45NキューブH(45×45×60cm)　フタなし",g:18500,bk:"水槽満水時121kg"},
+{c:"水槽",n:"ガラスフタ オールガラス水槽アクロ45用(幅43×奥行22cm) 1枚",g:720,bk:"ガラスフタ"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊360H　フタ付",g:4340,bk:"水槽満水時65kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊360H　フタ付",g:6340,bk:"水槽満水時65kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊360H　フタ付",g:11600,bk:"水槽満水時65kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊450H　フタ付",g:11800,bk:"水槽満水時75kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊450H　フタ付",g:13800,bk:"水槽満水時75kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊300＊450H　フタ付",g:16800,bk:"水槽満水時75kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊450＊450H　フタ付",g:10170,bk:"水槽満水時122kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊450＊450H　フタ付",g:12170,bk:"水槽満水時122kg"},
+{c:"水槽",n:"既製品　ガラス水槽600＊450＊450H　フタ付",g:13470,bk:"水槽満水時122kg"},
+{c:"水槽",n:"既製品　ガラス水槽900＊450＊450H　フタ付",g:11790,bk:"水槽満水時182kg"},
+{c:"水槽",n:"既製品　ガラス水槽900＊450＊450H　フタ付",g:14790,bk:"水槽満水時182kg"},
+{c:"水槽",n:"既製品　ガラス水槽900＊450＊450H　フタ付",g:25000,bk:"水槽満水時182kg"},
+{c:"水槽",n:"既製品　ガラス水槽900＊300＊450H　フタ付",g:19000,bk:"水槽満水時95kg"},
+{c:"水槽",n:"既製品　ガラス水槽1200＊450＊450H　フタ付",g:22000,bk:"水槽満水時243kg"},
+{c:"水槽",n:"既製品　ガラス水槽1200＊450＊450H　フタ付",g:25000,bk:"水槽満水時243kg"},
+{c:"水槽",n:"既製品　ガラス水槽1200＊450＊450H　フタ付",g:39500,bk:"水槽満水時243kg"},
+{c:"水槽",n:"ADA　キューブガーデン　600＊300＊360H",g:11000},
+{c:"水槽",n:"ADA　キューブガーデン　600＊450＊450H",g:16600},
+{c:"水槽",n:"高透過アクリル水槽　1200＊450＊600H　フタ付き",g:79700,bk:"水槽満水時324kg"},
+{c:"水槽",n:"特注水槽台 1200＊450＊900H　メラミン仕上げ",g:114000},
+{c:"水槽",n:"専用上部カバー1200＊450＊200H　メラミン仕上げ",g:39000},
+{c:"水槽",n:"エーハイム　変換プラグ　12：16-16：22",g:550},
+{c:"水槽",n:"アクロ プロテクションマット 120cm水槽用 121×46cm 厚さ5mm",g:1100},
+{c:"水槽",n:"アクアスクリーン・フォギータイプ　W1200×H500",g:3850},
+{c:"水槽",n:"バックスクリーン ARTI(アルティ)120 ジェットブラック(125×50cm)",g:1870},
+{c:"水槽",n:"バックスクリーン ARTI(アルティ)90 ジェットブラック(95×50cm)",g:1680},
+{c:"水槽",n:"バックスクリーン ARTI(アルティ)60 ジェットブラック(65×50cm)",g:1200},
+{c:"水槽",n:"バックスクリーン ARTI(アルティ)60 オーシャンブルー(65×50cm)",g:1200},
+{c:"水槽",n:"ADA ライトスクリーン 1200　W1200xH500(mm)用",g:105000},
+{c:"水槽",n:"水槽内仕切りパンチ版（可動式）",g:3500},
+{c:"水槽",n:"Reefer Nano (黒/白)",g:149400,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer Nano DX (RL60×1)",g:205600,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 170 G3",g:202300,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 170 G3 DX (RL115×1)",g:282200,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 200 G3",g:223000,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 200 G3 DX (RL115×1)",g:302900,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 250 G3",g:267700,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 250 G3 DX (RL115×2)",g:427500,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 300 G3",g:284000,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 300 G3 DX (RL115×2)",g:443800,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 350 G3",g:332200,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 350 G3 DX (RL115×2)",g:492000,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 425 G3 (受注生産)",g:367100,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 525 G3 (受注生産)",g:459700,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 625 G3 (受注生産)",g:520200,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer 750 G3 (受注生産)",g:734100,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer S-550 G3 (受注生産)",g:734100,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer S-700 G3 (受注生産)",g:869500,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer S-850 G3 (受注生産)",g:987900,bk:"RedSea/MMC"},
+{c:"水槽",n:"Reefer S-1000 G3 (受注生産)",g:1127600,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO Cube G2 (RL60×1)",g:187900,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO Peninsula G2 (RL60×1)",g:207100,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO XL G2 (RL60×1)",g:231200,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO XXL G2 (RL60×2)",g:412300,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO Cube G2 水槽単品",g:139000,bk:"RedSea/MMC"},
+{c:"水槽",n:"MAX NANO Cube/Desktop共用キャビネット",g:53500,bk:"RedSea/MMC"},
+{c:"水槽",n:"Desktop Cube セット",g:85700,bk:"RedSea/MMC"},
+{c:"水槽",n:"Desktop Peninsula セット",g:97500,bk:"RedSea/MMC"},
+{c:"水槽",n:"オルカT60+セット (黒/白)",g:98700,bk:"ORCA/MMC"},
+{c:"水槽",n:"オルカT90+セット (黒/白)",g:115700,bk:"ORCA/MMC"},
+{c:"水槽",n:"オルカT60+ DXセット",g:130560,bk:"ORCA/MMC"},
+{c:"水槽",n:"オルカT90+ DXセット",g:147560,bk:"ORCA/MMC"},
+{c:"水槽",n:"オルカT60+ 水槽単品",g:47400,bk:"ORCA/MMC"},
+{c:"水槽",n:"オルカT90+ 水槽単品",g:58900,bk:"ORCA/MMC"},
+{c:"水槽",n:"エクセルキャビネット648+",g:28300,bk:"ORCA/MMC"},
+{c:"水槽",n:"エクセルキャビネット948+",g:36200,bk:"ORCA/MMC"},
+{c:"水槽",n:"エクセル ガラスサンプ550",g:32200,bk:"ORCA/MMC"},
+{c:"水槽",n:"Woody30+ キャビネット",g:11700,bk:"ORCA/MMC"},
+{c:"水槽",n:"Woody45+ キャビネット",g:13400,bk:"ORCA/MMC"},
+{c:"水槽",n:"Woody60+ キャビネット",g:15500,bk:"ORCA/MMC"},
+{c:"水槽",n:"SHELL-II+",g:39000,bk:"ORCA/MMC"},
+{c:"水槽",n:"SHELL-II+ キャビネット",g:16500,bk:"ORCA/MMC"},
+{c:"水槽",n:"シェル AIO 60",g:52200,bk:"ORCA/MMC"},
+{c:"水槽",n:"シェル AIO専用キャビネット638",g:26000,bk:"ORCA/MMC"},
+{c:"水槽",n:"コネクト サイドタンク45",g:29900,bk:"AquaSteady/MMC"},
+{c:"水槽",n:"コネクト マルチキャビネット45 黒",g:37400,bk:"AquaSteady/MMC"},
+{c:"水槽",n:"コネクト リザーバータンク25L",g:18700,bk:"AquaSteady/MMC"},
+// ── 水槽台・架台 ──
+{c:"水槽台・架台",n:"既製品　プロスタイル300/350SQ　370＊364＊750H（黒・白）",g:6900},
+{c:"水槽台・架台",n:"既製品　プロスタイル300/350SQ　370＊364＊750H（黒・白）",g:6900},
+{c:"水槽台・架台",n:"既製品　プロスタイル400/450SQ　470＊464＊750H（黒・白）",g:6900},
+{c:"水槽台・架台",n:"既製品　プロスタイル　4530　460＊320＊700H（黒・白）",g:8200},
+{c:"水槽台・架台",n:"既製品　プロスタイル6030　610＊320＊700H（黒・白・木目）",g:10300},
+{c:"水槽台・架台",n:"既製品　プロスタイル6045　610＊470＊700H（黒・白・木目）",g:15400},
+{c:"水槽台・架台",n:"既製品　プロスタイル9030　910＊320＊700H（黒・白・木目）",g:16000},
+{c:"水槽台・架台",n:"既製品　プロスタイル9045　910＊470＊703H（黒・白・木目）",g:18100},
+{c:"水槽台・架台",n:"既製品　プロスタイル12045　1210＊470＊710H（黒・白）",g:31900},
+{c:"水槽台・架台",n:"既製品　アクロ 水槽台　 450×450×700H（黒・白・木目）",g:29800},
+{c:"水槽台・架台",n:"既製品　JUN ステージア  1200×450×700H　木目",g:72400},
+{c:"水槽台・架台",n:"既製品水槽台のかさ上げ＋300H　（台の高さ1000H）",g:25000},
+{c:"水槽台・架台",n:"既製品水槽台の背面隠し　塩ビ板　W570×H660",g:5200},
+{c:"水槽台・架台",n:"既製品水槽台の背面隠し　塩ビ板　W870×H660",g:7200},
+{c:"水槽台・架台",n:"既製品水槽台の背面隠し　塩ビ板　W1170×H660",g:8500},
+{c:"水槽台・架台",n:"既製品水槽台の背面隠し　ルーバー黒色　W250×H660",g:8200},
+{c:"水槽台・架台",n:"既製品水槽台の背面隠し　ルーバー白色　W250×H660",g:5000},
+{c:"水槽台・架台",n:"HEIAN SHINDO 突っ張り棒 L Lマットブラック 65〜100cm 耐圧200kg",g:3600},
+{c:"水槽台・架台",n:"ベビーガード マグネット式 チャイルドロック",g:2200},
+{c:"水槽台・架台",n:"コーナーガード 全長6M 水洗いで貼り直せるゲルテープ（ホワイト）",g:1600},
+{c:"水槽台・架台",n:"クーラー用カバー　350ｘ400ｘ500H　メラミン化粧（台と同じ色）",g:32000},
+// ── フード（上部カバー） ──
+{c:"フード（上部カバー）",n:"専用上部カバー300＊300＊190H　塩ビ仕上げ",g:12000},
+{c:"フード（上部カバー）",n:"専用上部カバー600＊300＊190H　塩ビ仕上げ",g:12000},
+{c:"フード（上部カバー）",n:"専用上部カバー600＊450＊190H　塩ビ仕上げ",g:16200},
+{c:"フード（上部カバー）",n:"専用上部カバー900＊450＊190H　塩ビ仕上げ",g:20800},
+{c:"フード（上部カバー）",n:"専用上部カバー1200＊450＊190H　塩ビ仕上げ",g:28600},
+{c:"フード（上部カバー）",n:"専用上部カバー600＊450＊230H",g:17600},
+{c:"フード（上部カバー）",n:"専用上部カバー900＊450＊230H",g:25300},
+{c:"フード（上部カバー）",n:"専用上部カバー1200＊450＊230H",g:28600},
+// ── ろ過槽・ろ過機・ろ材 ──
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　外部フィルタープロフェッショナル4+ 2275 （φ244×H453）",g:29200},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　外部フィルター2217　（φ235×H390）",g:21400},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　外部フィルター2215　ろ材付セット（φ202×H358）",g:17440},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　外部フィルター2213",g:8150},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　サブフィルター2217",g:6200},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　ホース　12：16　3m",g:1200},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　ホース　16：22　1m",g:570},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　ホース　16：22　3m",g:1970},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　変換プラグ　12：16-16：22",g:580},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　シングルタップ(φ12/16mm用)",g:850},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　シングルタップ(φ16/22mm用)",g:1520},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　ダブルタップ(φ12/16mm用)",g:1940},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　ダブルタップ(φ16/22mm用)",g:3500},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　サブストラットプロレギュラー5リットル",g:7090},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA スーパージェットフィルター　ES-2400 　下記は付属品",g:131200},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA スーパージェットフィルター　ES-1200 　下記は付属品",g:96250},
+{c:"ろ過槽・ろ過機・ろ材",n:"高品質ろ過材　セラミックリング　Lサイズ　21L（LSS）ネット付き",g:9500},
+{c:"ろ過槽・ろ過機・ろ材",n:"高品質ろ過材　パワーハウス　ハード　L サイズ　5L",g:9800},
+{c:"ろ過槽・ろ過機・ろ材",n:"高品質ろ過材　パワーハウスソフト（淡水用）　5L",g:10700},
+{c:"ろ過槽・ろ過機・ろ材",n:"高品質ろ過材　パワーハウスベーシック　5L",g:6500},
+{c:"ろ過槽・ろ過機・ろ材",n:"ボルクスジャパン マンティス バイオスフィア 1kg",g:3200},
+{c:"ろ過槽・ろ過機・ろ材",n:"ネクストジェネレーション バイオメディア S",g:3800},
+{c:"ろ過槽・ろ過機・ろ材",n:"ネクストジェネレーション バイオメディア M",g:5500},
+{c:"ろ過槽・ろ過機・ろ材",n:"ネクストジェネレーション バイオメディア L",g:5500},
+{c:"ろ過槽・ろ過機・ろ材",n:"ボルクスジャパン マンティス バイオスフィア 1kg",g:3000},
+{c:"ろ過槽・ろ過機・ろ材",n:"シーケム フォスボンド PhosBond 500ml 淡水海水用",g:6500},
+{c:"ろ過槽・ろ過機・ろ材",n:"バイコム（海水用）",g:2890},
+{c:"ろ過槽・ろ過機・ろ材",n:"バイコム（淡水用）",g:2220},
+{c:"ろ過槽・ろ過機・ろ材",n:"リバースグレイン ソフト",g:725},
+{c:"ろ過槽・ろ過機・ろ材",n:"スライドベースパワー　底面式ろ過システム",g:1650},
+{c:"ろ過槽・ろ過機・ろ材",n:"アクアシステム　プロジェクトフィルター　プラス645",g:5800},
+{c:"ろ過槽・ろ過機・ろ材",n:"アクアシステム プロジェクトフィルターPS  底面フィルター",g:2800},
+{c:"ろ過槽・ろ過機・ろ材",n:"水作　スペースパワーフィットプラス　Ｍ　水中フィルター",g:1190},
+{c:"ろ過槽・ろ過機・ろ材",n:"GEX　イーロカ701",g:1500},
+{c:"ろ過槽・ろ過機・ろ材",n:"GEX　イーロカPF201",g:669},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム アクア 160 水中フィルター ディフューザー付き",g:4200},
+{c:"ろ過槽・ろ過機・ろ材",n:"GEX 外掛けフィルター スリムフィルター Lサイズ　W290×D92×H160",g:1450},
+{c:"ろ過槽・ろ過機・ろ材",n:"コトブキ工芸 上部フィルタースーパーターボ トリプルボックス 600",g:2400},
+{c:"ろ過槽・ろ過機・ろ材",n:"コトブキ工芸 上部フィルター スーパーターボゼットプラス900",g:7500},
+{c:"ろ過槽・ろ過機・ろ材",n:"コトブキ工芸 上部フィルター スーパーターボゼットプラス1200",g:12100},
+{c:"ろ過槽・ろ過機・ろ材",n:"特注上部ろ過機　1180＊200＊230　ＲＥＩＳＥＡ　P－315Ｖポンプ付",g:35780},
+{c:"ろ過槽・ろ過機・ろ材",n:"特注上部ろ過機　680＊230＊230　ＲＥＩＳＥＡ　P－315Ｖポンプ付",g:48500},
+{c:"ろ過槽・ろ過機・ろ材",n:"特注上部ろ過機　1940＊200＊230　ＲＥＩＳＥＡ　P－450Ｖポンプ付",g:73400},
+{c:"ろ過槽・ろ過機・ろ材",n:"ハイドール　クリスタルフィルター2　投げ込み式ろ過器",g:4500},
+{c:"ろ過槽・ろ過機・ろ材",n:"ニッソー　スーパーパル",g:2748},
+{c:"ろ過槽・ろ過機・ろ材",n:"スライドフィルター",g:1559},
+{c:"ろ過槽・ろ過機・ろ材",n:"カミハタ　Rio800水中ポンプ",g:2425},
+{c:"ろ過槽・ろ過機・ろ材",n:"カミハタ　Rioコンバージョンキット2",g:443},
+{c:"ろ過槽・ろ過機・ろ材",n:"カミハタ　Rioアディショナルフィルターチャンバー2",g:423},
+{c:"ろ過槽・ろ過機・ろ材",n:"カミハタ　Rio+フィルターセット4",g:3780},
+{c:"ろ過槽・ろ過機・ろ材",n:"高品質ろ過材　グラスリング　α　Mサイズ　10kg/20ℓ",g:3510},
+{c:"ろ過槽・ろ過機・ろ材",n:"水作エイトＭ",g:544},
+{c:"ろ過槽・ろ過機・ろ材",n:"ピストルパイプ　50＊16A",g:700},
+{c:"ろ過槽・ろ過機・ろ材",n:"ニッソー　ティポイント6(テラリウム用ろ過フィルター)",g:3200},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　サブフィルター2215",g:4620},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　コンパクトポンプ1000",g:2210},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　アクアコンパクト　2005",g:4400},
+{c:"ろ過槽・ろ過機・ろ材",n:"エーハイム　T-ジョイント",g:480},
+{c:"ろ過槽・ろ過機・ろ材",n:"ニッソー　マスター600DX",g:3400},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　リリィパイプP　P-4",g:7960},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　リリィパイプP　P-6",g:8660},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　リリィパイプV　V-5",g:9450},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　リリィパイプV　V-7",g:11550},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　クリアホース　φ13　3m",g:1000},
+{c:"ろ過槽・ろ過機・ろ材",n:"ADA　クリアホース　φ17　3m",g:1410},
+{c:"ろ過槽・ろ過機・ろ材",n:"Nano Mat",g:33200,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 250",g:55300,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 500",g:64300,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 1200",g:68100,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"NanoMat用フリースロール18m(2個)",g:3200,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 250用フリースロール32m",g:2200,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 500用フリースロール28m",g:2900,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ReefMat 1200用フリースロール35m",g:4000,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"リーフスペックカーボン 200ml",g:1000,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"リーフスペックカーボン 500ml",g:1700,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"リーフスペックカーボン 1000ml",g:2600,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"リーフスペックカーボン 2000ml",g:4200,bk:"RedSea/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"Organic X 250ml",g:1600,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"Organic X 500ml",g:2500,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"Organic X 1000ml",g:4400,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"GFO Hybrid 250ml",g:2800,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"GFO Hybrid 500ml",g:4800,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"GFO Hybrid 1000ml",g:8900,bk:"ZOOX/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ローワフォス 100ml",g:1900,bk:"ROWA/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ローワフォス 250ml",g:2700,bk:"ROWA/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ローワフォス 500ml",g:4400,bk:"ROWA/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ローワカーボン 500ml",g:2400,bk:"ROWA/MMC"},
+{c:"ろ過槽・ろ過機・ろ材",n:"ローワカーボン 1000ml",g:2900,bk:"ROWA/MMC"},
+// ── エーハイム2260用 ──
+{c:"エーハイム2260用",n:"エーハイム　大型フィルター2260(Ø355＊570H)　2,000 ℓ/h",g:49800},
+{c:"エーハイム2260用",n:"ろ過吹き出し用ロングパイプ",g:2200},
+{c:"エーハイム2260用",n:"エーハイム　ダブルタップ(φ25/34mm用)",g:4940},
+{c:"エーハイム2260用",n:"エーハイム　ダブルタップ(φ16/22mm用)",g:2193},
+{c:"エーハイム2260用",n:"サブストラットプロレギュラー　5L",g:5821},
+// ── ポンプ（循環） ──
+{c:"ポンプ（循環）",n:"REI-SEA　RSD-20A",g:14300},
+{c:"ポンプ（循環）",n:"REI-SEA　RSD-40A",g:21580},
+{c:"ポンプ（循環）",n:"REI-SEA　RSD-50A",g:24050},
+{c:"ポンプ（循環）",n:"REI-SEA　RMD-301",g:18600},
+{c:"ポンプ（循環）",n:"REI-SEA　RMD-401",g:20860},
+{c:"ポンプ（循環）",n:"REI-SEA　RMD-551",g:23180},
+{c:"ポンプ（循環）",n:"REI-SEA　RMD-701",g:31200},
+{c:"ポンプ（循環）",n:"REI-SEA　RMD-1001",g:36600},
+{c:"ポンプ（循環）",n:"カミハタ　Rio3100水中ポンプ　48（L／m）",g:8670},
+{c:"ポンプ（循環）",n:"カミハタ　Rio2500水中ポンプ　34（L／m）",g:5900},
+{c:"ポンプ（循環）",n:"カミハタ　Rio2100水中ポンプ　32（L／m）",g:5200},
+{c:"ポンプ（循環）",n:"カミハタ　Rio1400水中ポンプ　24（L／m）",g:3250},
+{c:"ポンプ（循環）",n:"カミハタ　Rio1100水中ポンプ　22（L／m）",g:2930},
+{c:"ポンプ（循環）",n:"カミハタ　Rio800水中ポンプ　8（L／m）",g:2430},
+{c:"ポンプ（循環）",n:"カミハタ　Rio400水中ポンプ　5.6（L／m）",g:1960},
+{c:"ポンプ（循環）",n:"エーハイム コンパクトオン 1000 NEW（400〜1000ℓ/h）",g:1960},
+{c:"ポンプ（循環）",n:"上部ろ過用水中式ポンプ　REISEA　P-315",g:16380},
+{c:"ポンプ（循環）",n:"REI-SEA　P-425V",g:18000},
+{c:"ポンプ（循環）",n:"上部ろ過用水中式ポンプ　REISEA　P-450",g:21740},
+{c:"ポンプ（循環）",n:"ＳＩＣＣＥ　ＭＵＬＴＩ-4000",g:13200},
+{c:"ポンプ（循環）",n:"オクトバリオス2　DCポンプ",g:22500},
+{c:"ポンプ（循環）",n:"オクトバリオス4　DCポンプ",g:28000},
+{c:"ポンプ（循環）",n:"オクトバリオス6　DCポンプ",g:38200},
+{c:"ポンプ（循環）",n:"オクトバリオス8　DCポンプ",g:50100},
+{c:"ポンプ（循環）",n:"DCP3e 3500　DCポンプ",g:21000},
+{c:"ポンプ（循環）",n:"DCP3e 5000　DCポンプ",g:24000},
+{c:"ポンプ（循環）",n:"DCP3e 8000　DCポンプ",g:28000},
+{c:"ポンプ（循環）",n:"REISEA　MX４０１　２００V三相",g:165000},
+{c:"ポンプ（循環）",n:"循環ポンプ用　相フランジセット４０A",g:16500},
+{c:"ポンプ（循環）",n:"REISEA　RX７５０AS　２００V三相",g:824000},
+{c:"ポンプ（循環）",n:"配管一式",g:22000},
+{c:"ポンプ（循環）",n:"エーハイム水陸両用ポンプ1260　(流量2400L/h　16/22)",g:23500},
+{c:"ポンプ（循環）",n:"ホース　10m （内径15mm）",g:2500},
+{c:"ポンプ（循環）",n:"エーハイム　シングルタップ(φ16/22mm用)",g:1520},
+{c:"ポンプ（循環）",n:"エーハイム 吸水パイプ(直径12/16用)",g:1100},
+{c:"ポンプ（循環）",n:"エーハイム ツ 吸水ストレーナー",g:1100},
+{c:"ポンプ（循環）",n:"純水器　ウォーターエンジニアリング　ⅢPro",g:48000},
+{c:"ポンプ（循環）",n:"純水器ⅢPro　ウォーターエンジニアリング　(樹脂入)＋LED比抵抗率計",g:53000},
+{c:"ポンプ（循環）",n:"レッドシー Reef ATO+ 自動給水器",g:37700},
+{c:"ポンプ（循環）",n:"レッドシー Reef Can 40L 自動給水用貯水タンク　W170×D500×H550mm",g:14600},
+{c:"ポンプ（循環）",n:"Nero3 (7570L/H) 13mmまで",g:23000,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Nero5 (11356L/H) 16mmまで",g:29600,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Nero7 (15142L/H) 20mmまで",g:39000,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Orbit 2 (70-330L) 7500L/H",g:34800,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Orbit 4 (70-450L) 15000L/H",g:40000,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Nero Guard 3/5",g:700,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Nero Guard 7",g:1000,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"NeroマグネットUPG (13→16mm)",g:4500,bk:"AI/LSS"},
+{c:"ポンプ（循環）",n:"Vectra S2 (Mobius) 5300L/H",g:44000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra M2 (Mobius) 7500L/H",g:57000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra L2 (Mobius) 11500L/H",g:66000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"VECTRA ストレーナー S2/M2/L2",g:2400,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra S2/M2/L2 Mobius Controller",g:18000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra S2 rotor",g:6800,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra M2 rotor",g:8000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Vectra L2 rotor",g:9000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Battery Backup (停電用)",g:31000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"Battery Backup Booster (Vectra用)",g:5000,bk:"EcoTech/LSS"},
+{c:"ポンプ（循環）",n:"AQ-800 (880L/H)",g:8500,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-1000 (1150L/H)",g:9000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-1200 (1300L/H)",g:10000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-1500 (1500L/H)",g:10500,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-1800 (1850L/H)",g:11000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-2000 (2000L/H)",g:13000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"AQ-3000 (3300L/H)",g:15000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 2 (3000L/H) 25w",g:24000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 4 (4000L/H) 40w",g:30000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 6 (6500L/H) 70w",g:36000,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 8 (10000L/H) 98w",g:43700,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 10 ハイプレッシャー(16000L/H)",g:81500,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"VarioS 2/4/6/8 WiFiコントローラー",g:10800,bk:"OCTO/LSS"},
+{c:"ポンプ（循環）",n:"ReefRun G2 4000 DCポンプ",g:32000,bk:"RedSea/MMC"},
+{c:"ポンプ（循環）",n:"ReefRun G2 6000 DCポンプ",g:39300,bk:"RedSea/MMC"},
+{c:"ポンプ（循環）",n:"ReefRun G2 8000 DCポンプ",g:46900,bk:"RedSea/MMC"},
+{c:"ポンプ（循環）",n:"ReefRun G2 12000 DCポンプ",g:55400,bk:"RedSea/MMC"},
+{c:"ポンプ（循環）",n:"ポセイドンDC10000L",g:96000,bk:"ZOOX/MMC"},
+{c:"ポンプ（循環）",n:"ポセイドンDC15000L",g:129300,bk:"ZOOX/MMC"},
+{c:"ポンプ（循環）",n:"アトラス1",g:54300,bk:"ZOOX/MMC"},
+{c:"ポンプ（循環）",n:"アトラス2",g:64400,bk:"ZOOX/MMC"},
+{c:"ポンプ（循環）",n:"Micra Plus",g:3700,bk:"Sicce/MMC"},
+{c:"ポンプ（循環）",n:"Syncra 1.0",g:5500,bk:"Sicce/MMC"},
+{c:"ポンプ（循環）",n:"Syncra 1.5",g:7400,bk:"Sicce/MMC"},
+{c:"ポンプ（循環）",n:"Syncra 2.0",g:11900,bk:"Sicce/MMC"},
+{c:"ポンプ（循環）",n:"Syncra 3.0",g:17100,bk:"Sicce/MMC"},
+{c:"ポンプ（循環）",n:"Syncra 4.0",g:21900,bk:"Sicce/MMC"},
+// ── 水中ポンプ仕様 ──
+{c:"水中ポンプ仕様",n:"REI-SEA　RSD-50A",g:15330},
+{c:"水中ポンプ仕様",n:"カミハタ　Rio1100水中ポンプ",g:2780},
+{c:"水中ポンプ仕様",n:"エーハイムホース　16：22　3m",g:1920},
+{c:"水中ポンプ仕様",n:"エーハイム 吸水パイプ(直径12/16用)",g:1000},
+// ── 水流ポンプ ──
+{c:"水流ポンプ",n:"ナプコ　ネワウェーブNWA1900adj",g:3600},
+{c:"水流ポンプ",n:"ナプコ　ネワウェーブNWA3200",g:5300},
+{c:"水流ポンプ",n:"ナプコ　ネワウェーブNWA5900",g:7100},
+{c:"水流ポンプ",n:"Vortech　MP-10　WQD",g:30500},
+{c:"水流ポンプ",n:"レッドシー　ReefWave25",g:57500},
+{c:"水流ポンプ",n:"レッドシー　ReefWave45",g:67500},
+{c:"水流ポンプ",n:"ボルクスジャパン VestaWave VW13HG 40W 13000L",g:23100},
+{c:"水流ポンプ",n:"Vesta Wave VW04A 15W",g:13600},
+{c:"水流ポンプ",n:"Vesta Wave VW08A 20W",g:18400},
+{c:"水流ポンプ",n:"VorTech MP10 MQD (〜9.5mm)",g:43000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"VorTech MP40 MQD (〜19mm)",g:52000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"VorTech MP60 MQD (9.5-26mm)",g:96000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"MP10 Power Supply",g:7500,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"MP40 Power Supply",g:7500,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"MP60 Power Supply",g:10000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"QD Driver 10",g:9800,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"QD Driver 40",g:14000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"QD Driver 60",g:19000,bk:"EcoTech/LSS"},
+{c:"水流ポンプ",n:"Pulse 2 (6000L/H) コントローラー",g:29500,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"Pulse 4 (17000L/H) コントローラー",g:34800,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"Pulse 2+ (App対応)",g:37500,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"Pulse 4+ (App対応)",g:43000,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"Pulse 2+ 増設用ポンプ",g:18000,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"Pulse 4+ 増設用ポンプ",g:21200,bk:"OCTO/LSS"},
+{c:"水流ポンプ",n:"ReefWave 25",g:43000,bk:"RedSea/MMC"},
+{c:"水流ポンプ",n:"ReefWave 45",g:49900,bk:"RedSea/MMC"},
+{c:"水流ポンプ",n:"ファンタスティックウェーブ ZX-4000",g:13000,bk:"ZOOX/MMC"},
+{c:"水流ポンプ",n:"ファンタスティックウェーブ ZX-8000",g:15300,bk:"ZOOX/MMC"},
+{c:"水流ポンプ",n:"ZOOX Leviathan 2500+",g:50600,bk:"ZOOX/MMC"},
+{c:"水流ポンプ",n:"ZOOX Leviathan 5000+",g:60000,bk:"ZOOX/MMC"},
+{c:"水流ポンプ",n:"コラリア サードジェネレーション 7000",g:10200,bk:"Hydor/MMC"},
+{c:"水流ポンプ",n:"コラリア サードジェネレーション 9000",g:11500,bk:"Hydor/MMC"},
+{c:"水流ポンプ",n:"スマートウェーブ (コントローラー)",g:8300,bk:"Hydor/MMC"},
+{c:"水流ポンプ",n:"ボイジャー ナノ1000",g:4500,bk:"Sicce/MMC"},
+{c:"水流ポンプ",n:"ボイジャー ナノ2000",g:6300,bk:"Sicce/MMC"},
+// ── クーラー ──
+{c:"クーラー",n:"ゼンスイ　ZRmini（200＊260＊405H）",g:38500},
+{c:"クーラー",n:"ゼンスイ　ZR-75E(280＊330＊420H)",g:42200},
+{c:"クーラー",n:"ゼンスイ　ZR-130E(260＊440＊470H)",g:58200},
+{c:"クーラー",n:"ゼンスイ　ZR-180E(260＊440＊470H)",g:65300},
+{c:"クーラー",n:"ゼンスイ　ZR-250(348＊435＊520H)",g:72700},
+{c:"クーラー",n:"ゼンスイ　ZC-200α(200＊320＊350Ｈ)",g:57750},
+{c:"クーラー",n:"ゼンスイ　ZC-500α(250＊420＊470Ｈ)",g:109450},
+{c:"クーラー",n:"ゼンスイ　ZC-700α(250＊430＊530Ｈ)",g:136450},
+{c:"クーラー",n:"ゼンスイ　ZC-1000α(250＊430＊530Ｈ)",g:153450},
+{c:"クーラー",n:"ゼンスイ　ZC-1300α(350＊460＊460H)",g:179300},
+{c:"クーラー",n:"ゼンスイ　ZRW400(800＊300＊505H)",g:103950},
+{c:"クーラー",n:"ゼンスイ　ZTK-500　(310＊310＊416Ｈ)",g:130000},
+{c:"クーラー",n:"ゼンスイ　ZTK-1000　(310＊310＊458Ｈ)",g:165000},
+{c:"クーラー",n:"ゼンスイ　ZTK-2000　(310＊310＊500Ｈ)",g:197000},
+{c:"クーラー",n:"ゼンスイ 　 ZRC-400B　単相100V　385×465×397H",g:168000},
+{c:"クーラー",n:"ゼンスイ　400CL　単相100V",g:325500},
+{c:"クーラー",n:"ゼンスイ　600CL　三相200V　W420×D530×H530",g:429900},
+{c:"クーラー",n:"ゼンスイ　800CL　三相200V",g:433400},
+{c:"クーラー",n:"ゼンスイ　KDA-501A",g:263000},
+{c:"クーラー",n:"ゼンスイ　KDA-1001A",g:418000},
+{c:"クーラー",n:"ゼンスイ　ZCW-2000",g:1029000},
+{c:"クーラー",n:"REISEA　ＬＸ300　※別売りサーモスタットセット（292*430*395H）",g:249000},
+{c:"クーラー",n:"ＲＥＩＳＥＡ　ＬＸ１８０ＥＸＡ１（幅24.8×奥行き41.8×高さ49.3cm）",g:144490},
+{c:"クーラー",n:"ＲＥＩＳＥＡ　ＴＣ-１０１",g:23340},
+{c:"クーラー",n:"ＲＥＩＳＥＡ　Ｐ-４２５Ｖ",g:25290},
+{c:"クーラー",n:"ゼンスイ　クーラーKDA500S　100V　380＊420＊350Ｈ",g:331800},
+// ── 殺菌灯 ──
+{c:"殺菌灯",n:"カミハタ　ターボツイストZ　9W（280＊130＊90H）",g:14500},
+{c:"殺菌灯",n:"カミハタ　ターボツイストZ　18W（340＊160＊120H）",g:20450},
+{c:"殺菌灯",n:"カミハタ　ターボツイストZ　36W（530＊160＊120H）",g:26900},
+{c:"殺菌灯",n:"カミハタ　ターボツイストZ　36W　交換球",g:6111},
+// ── ライト・LED ──
+{c:"ライト・LED",n:"ゼンスイ　LED+300　マルチカラー",g:5300},
+{c:"ライト・LED",n:"ゼンスイ　LED+450　マルチカラー",g:6600},
+{c:"ライト・LED",n:"ゼンスイ　LED+600　マルチカラー",g:7800},
+{c:"ライト・LED",n:"ゼンスイ　LED+900　マルチカラー",g:10800},
+{c:"ライト・LED",n:"ゼンスイ　LED+1200　マルチカラー",g:14800},
+{c:"ライト・LED",n:"ゼンスイ　LED+1500　マルチカラー",g:18800},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 300 ブラック",g:11000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 450 ブラック",g:18000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 600 ブラック",g:26000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 900 ブラック",g:34000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 1200 ブラック",g:40000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 プロ　300 ブラック",g:21000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 プロ　450 ブラック",g:30000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 プロ　600 ブラック",g:39000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 プロ　900 ブラック",g:54000},
+{c:"ライト・LED",n:"Chihiros LED WRGB2 プロ　1200 ブラック",g:65000},
+{c:"ライト・LED",n:"WRGB2 吊り下げキット",g:3800},
+{c:"ライト・LED",n:"WRGB2 用　アルミニウム合金　ライトスタンド　ブラック",g:11300},
+{c:"ライト・LED",n:"ADA　ソーラーRGB2",g:78500},
+{c:"ライト・LED",n:"ADA　ソーラーRGB　専用シェード",g:5680},
+{c:"ライト・LED",n:"ソーラーRGB専用スタンド W1200mm対応 (受注生産)",g:68200},
+{c:"ライト・LED",n:"ソーラーRGB専用ステンレススタンド　 W60×D45cm対応ライト用",g:24200},
+{c:"ライト・LED",n:"ソーラーRGB専用ステンレススタンド　 W60×D45cm対応レフト用",g:24200},
+{c:"ライト・LED",n:"ソーラーRGB専用ステンレススタンド　 W90×D45cm対応",g:19170},
+{c:"ライト・LED",n:"ステンレスポール　バンド付",g:21525},
+{c:"ライト・LED",n:"アクアリウムスタンド WEEK AQUA純正 背面型スタンド　W900",g:19800},
+{c:"ライト・LED",n:"RGBスイッチングLEDライト　コントローラー・アダプター付",g:21380},
+{c:"ライト・LED",n:"GrassyLeDioRX122s Deep B / ディープ （ブラックorシルバー）23W E26",g:17000},
+{c:"ライト・LED",n:"GrassyLeDioRX122s Coral B /コーラル （ブラックorシルバー）23W E26",g:17000},
+{c:"ライト・LED",n:"GrassyLeDioRX122s Leaf B / リーフ （ブラックorシルバー）23W E26",g:17000},
+{c:"ライト・LED",n:"GrassyLeDio RX201 Marine /マリン（シルバー）18W E26",g:11000},
+{c:"ライト・LED",n:"GrassyLeDio RX072e Deep/ ディープ （シルバー）14W E26",g:8000},
+{c:"ライト・LED",n:"GrassyLeDio RX072e Coral /コーラル  （シルバー）14W E26",g:8000},
+{c:"ライト・LED",n:"GrassyLeDio RX072e Reef/ リーフ （シルバー）14W E26",g:8000},
+{c:"ライト・LED",n:"SwitchBot LED電球 スマート電球 E26（調光可能）２個入り",g:3600},
+{c:"ライト・LED",n:"ZOOX アポロレイズ エキゾチックプランツ 20W Apollo RAYS",g:14500},
+{c:"ライト・LED",n:"ZOOX RGBレイズ 20W RGB RAYS",g:8800},
+{c:"ライト・LED",n:"ZOOX  トロピカルレイズ ウルトラ 20W Tropical RAYS Ultra PPFD",g:8800},
+{c:"ライト・LED",n:"ZOOX  ラグーン レイズ　 20W 　True Sun spectrum",g:9000},
+{c:"ライト・LED",n:"GrassyLeDioRX122s  Fresh / フレッシュ （ブラックorシルバー）23W E26",g:17000},
+{c:"ライト・LED",n:"GrassyLeDio RX201 Fresh /フレッシュ （シルバー）18W E26",g:11000},
+{c:"ライト・LED",n:"GrassyLeDio RX201 Sun /サン （シルバー）18W E26",g:11000},
+{c:"ライト・LED",n:"GrassyLeDioRX121s Fresh/フレッシュ （シルバーorブラック）13W E26",g:9800},
+{c:"ライト・LED",n:"彩光X24 ワイド　22W Ra97 2630lm 6200K　（ブラック）　テラリウム",g:4800},
+{c:"ライト・LED",n:"彩光X24 ナロー　22W Ra97 2630lm 6200K（ブラック）",g:4800},
+{c:"ライト・LED",n:"彩光X24 ズーム　22W Ra97 2630lm 6200K（ブラック）",g:4800},
+{c:"ライト・LED",n:"AXY　FINESPOT　LED　35W　ホワイト",g:11800},
+{c:"ライト・LED",n:"GEX aquarista CLEAR LED RADIUS",g:15800},
+{c:"ライト・LED",n:"ボルクスジャパン レディオアーム2 （ブラック）",g:5930},
+{c:"ライト・LED",n:"ボルクスジャパン レディオアーム2 （シルバー）",g:5930},
+{c:"ライト・LED",n:"レディオクリップSX （ブラック）",g:2600},
+{c:"ライト・LED",n:"レディオクリップSX （シルバー）",g:2600},
+{c:"ライト・LED",n:"レディオクリップSX （ホワイト）",g:2600},
+{c:"ライト・LED",n:"MICMOL AIR PRO450 56W LED照明 45cm-60cm　サンゴ用",g:22100},
+{c:"ライト・LED",n:"MICMOL G3 Aqua Air600 60W LED照明 60-75cm　サンゴ用",g:28400},
+{c:"ライト・LED",n:"MICMOL AIR PRO600 84W LED照明　イソギンチャク・ソフトコーラル用",g:29000},
+{c:"ライト・LED",n:"MICMOL AIR PRO900  112W LED照明　イソギンチャク・ソフトコーラル用",g:35400},
+{c:"ライト・LED",n:"Grassy Core X120 Reef/リーフ LEDライト",g:62000},
+{c:"ライト・LED",n:"CoreX用ワイヤーセット　吊り下げパーツ",g:5000},
+{c:"ライト・LED",n:"Grassy CoreX用 アームスタンド",g:8200},
+{c:"ライト・LED",n:"エコテックマリン Radion(ラディオン) G6 XR15 Blue 100W サンゴ LED",g:83000},
+{c:"ライト・LED",n:"エコテックマリン Radion(ラディオン) G6 XR15 Pro 105W サンゴ LED",g:83000},
+{c:"ライト・LED",n:"エコテックマリン Radion(ラディオン) G6 XR30 Blue 205W サンゴ LED",g:150000},
+{c:"ライト・LED",n:"エコテックマリン Radion(ラディオン) G6 XR30 Pro 216W サンゴ LED",g:150000},
+{c:"ライト・LED",n:"エコテックマリン　Ｒａｄｉｏｎ（ラディオン）　Ｓｉｎｇｌｅ　Ｕｎｉｔ　Ｈａｎｇｉｎｇ　Ｋｉｔ",g:11000},
+{c:"ライト・LED",n:"エコテックマリン Radion(ラディオン) G5/G6 XR15用 タンクマウント",g:18500},
+{c:"ライト・LED",n:"レッドシー  ReefLED160S",g:87500},
+{c:"ライト・LED",n:"レッドシー  ReefLED160S用　ユニバーサルマウンティングアーム",g:11500},
+{c:"ライト・LED",n:"SPECTRA(スペクトラ) 　SP200　 専用スタンド、天吊りワイヤーセット",g:170000},
+{c:"ライト・LED",n:"ステンレスポール　固定バンド付　W1200＊H1900",g:45000},
+{c:"ライト・LED",n:"16色アクアリウムライト 水槽ライト RGB水中ランプ 防水 照明　28cm",g:4800},
+{c:"ライト・LED",n:"ゼンスイ 水中マルチカラーLED 600",g:11000},
+{c:"ライト・LED",n:"ゼンスイ 水中マルチカラーLED 900",g:15800},
+{c:"ライト・LED",n:"Hydra Edge 44HD Reef (40-60cm) 約95w",g:48500,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Hydra Edge 68HD Reef (60-90cm) 約135w",g:82000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Hydra Edge 44HD Freshwater(40-60cm淡水)",g:36000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 12\" Grow (海水/サンゴ)",g:19600,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 12\" Grow 30cm対応ステー加工",g:20600,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 21\" Grow",g:27000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 30\" Grow",g:34500,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 39\" Grow",g:49000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 12\" Glow",g:22800,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 21\" Glow",g:37000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 30\" Glow",g:51000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 39\" Glow",g:61000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 12\" Fuge (リフジウム)",g:19000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 12\" FW (熱帯魚/水草)",g:19600,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 21\" FW",g:27000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 30\" FW",g:34500,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Blade 39\" FW",g:49000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Prime16 HD (白or黒) 海水/サンゴ",g:32900,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Prime16 Sol (白)",g:30000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Prime16 Fuge (黒) リフジウム",g:32900,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Prime16 FW (白or黒) 熱帯魚/水草",g:32900,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Hydra32 FW (白) 熱帯魚/水草",g:52500,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Hydra32 HD (白or黒) 海水/サンゴ",g:52500,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Hydra64 HD (白or黒)",g:88000,bk:"AI/LSS"},
+{c:"ライト・LED",n:"Radion XR15 G6 BLUE",g:62000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"Radion XR15 G6 PRO",g:62000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"Radion XR30 G6 BLUE",g:113000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"Radion XR30 G6 PRO",g:113000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"Radion XR15 G5 FW (熱帯魚/水草)",g:55000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"Radion XR30 G5 FW",g:105000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"G5→G6 XR15 UPGキット(BLUE/PRO)",g:29000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"G5→G6 XR30 UPGキット(BLUE/PRO)",g:50000,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"XR15 Diffuser G6",g:4300,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"XR30 Diffuser G6",g:5580,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"XR15 Narrow Angle Lens(狭角)Kit",g:3300,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"XR30 Narrow Angle Lens(狭角)Kit",g:3800,bk:"Radion/LSS"},
+{c:"ライト・LED",n:"ReefLED G2 60",g:45100,bk:"RedSea/MMC"},
+{c:"ライト・LED",n:"ReefLED G2 115",g:64400,bk:"RedSea/MMC"},
+{c:"ライト・LED",n:"ReefLED G2 170",g:112600,bk:"RedSea/MMC"},
+{c:"ライト・LED",n:"ReefLED G2 60/115/170用バイザー",g:2700,bk:"RedSea/MMC"},
+{c:"ライト・LED",n:"リーフナノミニ",g:7900,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"リーフナノ3",g:15800,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"リーフウルトラ",g:31600,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"アクロブースター 65W",g:23700,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"アクティニックシャイナーライト60",g:12700,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"アクティニックシャイナーライト90",g:15800,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"ラグーンシャイナーライト60",g:12700,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"ラグーンシャイナーライト90",g:15800,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"アクティニックRAYS",g:9000,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"ラグーンRAYS",g:9000,bk:"ZOOX/MMC"},
+{c:"ライト・LED",n:"Apollo RAYS エキゾチックプランツ 20W",g:13000,bk:"Photosyn/MMC"},
+{c:"ライト・LED",n:"RGB RAYS 20W",g:7000,bk:"Photosyn/MMC"},
+{c:"ライト・LED",n:"Tropical RAYS Ultra 20W",g:7000,bk:"Photosyn/MMC"},
+{c:"ライト・LED",n:"Apollo マグネティック 15W",g:7000,bk:"Photosyn/MMC"},
+{c:"ライト・LED",n:"オプティマスフレッシュナノ",g:12000,bk:"ORCA/MMC"},
+// ── ヒーター ──
+{c:"ヒーター",n:"200W固定ヒーター",g:2220},
+{c:"ヒーター",n:"ニッソー プロテクトICオート R-110W サーモスタット一体型",g:3220},
+{c:"ヒーター",n:"ニッソー　プロテクトプラス　R-220W",g:4690},
+{c:"ヒーター",n:"ニッソー　プロテクトプラス　R-300W",g:5540},
+{c:"ヒーター",n:"ニッソー　プロテクトプロヒーター　R-500W",g:4430},
+{c:"ヒーター",n:"ニッソー　シーパレックス　600 NEO",g:6170},
+{c:"ヒーター",n:"ニッソー　プロテクトプロヒーター　R-300Ｗ",g:2910},
+{c:"ヒーター",n:"ニッソー　シーパレックス　300　NEO",g:2890},
+{c:"ヒーター",n:"日東チタンヒーター 単相100V 1kw(投込)＋デルサーモ＋ヒーターカバー",g:47500},
+{c:"ヒーター",n:"ニッソー シーパレックス V-1000 サーモスタッド 　1000W対応",g:12900},
+{c:"ヒーター",n:"ニッソー プロテクトヒーター　ストロングセーフ　1000Wヒーター",g:12900},
+{c:"ヒーター",n:"レイシー チタンヒーター SHI型 投込み式 1KW-100V1-G",g:95400},
+// ── エアポンプ ──
+{c:"エアポンプ",n:"水心SSPP-7Sエアーポンプ",g:1685},
+{c:"エアポンプ",n:"水心SSPP-3Sエアーポンプ",g:1685},
+{c:"エアポンプ",n:"水心SSPP-2Sエアポンプ",g:2580},
+{c:"エアポンプ",n:"小型エアポンプ ニチドー　ノンノイズH85",g:740},
+{c:"エアポンプ",n:"エアーカーテンシステム300",g:690},
+{c:"エアポンプ",n:"エアーカーテンシステム450",g:800},
+{c:"エアポンプ",n:"エアーカーテンシステム600",g:900},
+{c:"エアポンプ",n:"エアーカーテンシステム900",g:1130},
+{c:"エアポンプ",n:"エアーカーテンシステム1200",g:1330},
+{c:"エアポンプ",n:"エアーチューブ黒3ｍ",g:270},
+{c:"エアポンプ",n:"エアー逆止弁",g:280},
+{c:"エアポンプ",n:"キョーリン　エアポンプ　ハイブローC8000",g:5800},
+{c:"エアポンプ",n:"アデックスX202　高圧エアーポンプ",g:4500},
+{c:"エアポンプ",n:"小型エアポンプ",g:590},
+{c:"エアポンプ",n:"小型エアストーン",g:330},
+{c:"エアポンプ",n:"ニチドー　ワイヤーホース　1.5m",g:150},
+{c:"エアポンプ",n:"活魚水槽用エアーストーン　YS-200",g:3500},
+{c:"エアポンプ",n:"エアーストーン いぶき　 セラミックエアストーン 直径30×300 #150",g:3500},
+{c:"エアポンプ",n:"水作　ニューフラワーDX",g:1050},
+{c:"エアポンプ",n:"水心SSPP-2Sエアポンプ",g:2580},
+{c:"エアポンプ",n:"エアーカーテンシステム1200",g:1330},
+{c:"エアポンプ",n:"エアーチューブ黒3ｍ",g:270},
+{c:"エアポンプ",n:"エアー逆止弁",g:280},
+// ── プロテインスキマー ──
+{c:"プロテインスキマー",n:"Classic 110-S (160-500L)",g:30000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Classic 150-S (300-800L)",g:35000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"eSsence-130 (200-600L)",g:36000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Classic 152-S (200-600L)",g:41500,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 150-INT (200-800L)",g:52000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 200-INT (400-1500L)",g:70000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 250-INT (800-2400L)",g:85000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 300-INT (1000-2800L)",g:100000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 150-S",g:55000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 200-S",g:73500,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 250-S",g:87000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 300-S",g:98000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 200-E (外部式)",g:95000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 250-E (外部式)",g:105000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Regal 300-E (外部式)",g:118000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 150-INT",g:63000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 200-INT",g:75000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 220-INT",g:89000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 150-S",g:80000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 200-S",g:97000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"Elite 220-S",g:115000,bk:"OCTO/LSS"},
+{c:"プロテインスキマー",n:"REEFER スキマー 300",g:62300,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"REEFER スキマー 600",g:76000,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"REEFER スキマー 900",g:90000,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"Reefer DCスキマー 300",g:77900,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"Reefer DCスキマー 600",g:84900,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"Reefer DCスキマー 900",g:91900,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"ReefRunデュアルDCポンプコントローラー",g:31200,bk:"RedSea/MMC"},
+{c:"プロテインスキマー",n:"アルティマDC 300CS",g:52500,bk:"ZOOX/MMC"},
+{c:"プロテインスキマー",n:"アルティマDC 500CS",g:67800,bk:"ZOOX/MMC"},
+{c:"プロテインスキマー",n:"SHARK SKIMMER 150",g:14500,bk:"Sicce/MMC"},
+{c:"プロテインスキマー",n:"SHARK SKIMMER 300",g:20700,bk:"Sicce/MMC"},
+{c:"プロテインスキマー",n:"オルカスキマーミニットII (エアー別売)",g:2700,bk:"ORCA/MMC"},
+{c:"プロテインスキマー",n:"オルカスキマーミニットII DX",g:5900,bk:"ORCA/MMC"},
+// ── リアクター ──
+{c:"リアクター",n:"H&S　CA-1eco",g:63000},
+{c:"リアクター",n:"H&S　CA-2eco",g:86000},
+{c:"リアクター",n:"ARM　カルシウムリアクターメディア　大粒　3.78ℓ",g:2850},
+{c:"リアクター",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16590,bk:"ＣＯ2ボンベ"},
+{c:"リアクター",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:350,bk:"ＣＯ2ホース"},
+{c:"リアクター",n:"ADA　ボールバルブ",g:1560,bk:"ＣＯ2コネクタ"},
+{c:"リアクター",n:"ADA　電磁弁ＥＬバルブ",g:7300,bk:"ＣＯ2電磁制御"},
+{c:"リアクター",n:"ADA　スピードレギュレータ",g:19530,bk:"ＣＯ2機器"},
+{c:"リアクター",n:"デルフィス　PRSCR-400D",g:89000},
+{c:"リアクター",n:"デルフィス　PRSCR-800D",g:129000},
+{c:"リアクター",n:"デルフィス　PRSCR-1200D",g:149000},
+{c:"リアクター",n:"リーフオクトパス　CR-800R",g:85000},
+{c:"リアクター",n:"ARM　カルシウムリアクターメディア　大粒　3.78ℓ",g:2850},
+{c:"リアクター",n:"マーフィード　エキスパート マリンZ 50",g:13230},
+{c:"リアクター",n:"CR-100 カルシウムリアクター (260-450L)",g:36800,bk:"OCTO/LSS"},
+{c:"リアクター",n:"CR-140 カルシウムリアクター (400-800L)",g:45400,bk:"OCTO/LSS"},
+{c:"リアクター",n:"CalReact 140 (400-800L)",g:57500,bk:"OCTO/LSS"},
+{c:"リアクター",n:"CalReact 200 (1100-1800L)",g:66500,bk:"OCTO/LSS"},
+{c:"リアクター",n:"CalReact 220 (1400-2100L)",g:86000,bk:"OCTO/LSS"},
+{c:"リアクター",n:"BioReact 90 (〜400L)",g:25500,bk:"OCTO/LSS"},
+{c:"リアクター",n:"BioReact 120 (〜700L)",g:31800,bk:"OCTO/LSS"},
+{c:"リアクター",n:"BioReact 150 (〜2000L)",g:57000,bk:"OCTO/LSS"},
+{c:"リアクター",n:"BIO SPHERES 1L (バイオペレット)",g:6500,bk:"OCTO/LSS"},
+{c:"リアクター",n:"ミスティーク 180",g:39500,bk:"ZOOX/MMC"},
+{c:"リアクター",n:"ミスティーク 220",g:48300,bk:"ZOOX/MMC"},
+{c:"リアクター",n:"H2Ocean 流動性メディアリアクター",g:10200,bk:"DD/MMC"},
+{c:"リアクター",n:"ニュートリフィックス NP 250ml",g:3700,bk:"DD/MMC"},
+{c:"リアクター",n:"ニュートリフィックス NP 500ml",g:7100,bk:"DD/MMC"},
+{c:"リアクター",n:"ローワリスW 6kg (Caメディア9-15mm)",g:9900,bk:"DD/MMC"},
+{c:"リアクター",n:"Versa VX-1 (1連式)",g:28000,bk:"EcoTech/LSS"},
+{c:"リアクター",n:"Versa VXF-1 (4連式・ベース付)",g:108000,bk:"EcoTech/LSS"},
+{c:"リアクター",n:"Versa VXB-1 ベースステーション",g:23900,bk:"EcoTech/LSS"},
+{c:"リアクター",n:"VERSAチューブ (各色 約7.6m)",g:1600,bk:"EcoTech/LSS"},
+{c:"リアクター",n:"VERSAエルボー (4入)",g:2000,bk:"EcoTech/LSS"},
+{c:"リアクター",n:"Reef Dose 2",g:43500,bk:"RedSea/MMC"},
+{c:"リアクター",n:"Reef Dose 4",g:58700,bk:"RedSea/MMC"},
+// ── 流動式濾過リアクター ──
+{c:"流動式濾過リアクター",n:"Multi Media Reactor M",g:33000},
+{c:"流動式濾過リアクター",n:"Multi Media Reactor M　+バイオペレット500ml",g:38000},
+{c:"流動式濾過リアクター",n:"Multi Media Reactor L",g:40000},
+{c:"流動式濾過リアクター",n:"Multi Media Reactor L　+バイオペレット500ml×2",g:50000},
+{c:"流動式濾過リアクター",n:"ReefMat 250",g:50000},
+{c:"流動式濾過リアクター",n:"ReefMat 500",g:55000},
+{c:"流動式濾過リアクター",n:"ReefMat 1200",g:60000},
+{c:"流動式濾過リアクター",n:"ReefMat 250⽤フリースロール 32m",g:2900},
+{c:"流動式濾過リアクター",n:"ReefMat 500⽤フリースロール 28m",g:3500},
+{c:"流動式濾過リアクター",n:"ReefMat 250⽤フリースロール 32m",g:4500},
+// ── 自動給水・ATO ──
+{c:"自動給水・ATO",n:"ReefATO+",g:37700,bk:"RedSea/MMC"},
+{c:"自動給水・ATO",n:"ReefATO+ アップグレードキット",g:32800,bk:"RedSea/MMC"},
+{c:"自動給水・ATO",n:"インテリジェントATO V2",g:10600,bk:"ZOOX/MMC"},
+// ── 添加剤・テスト剤・水質 ──
+{c:"添加剤・テスト剤・水質",n:"マリンテスト PH/アルカリニティ",g:2800,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マリンテスト 硝酸塩/亜硝酸塩",g:3200,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マリンテスト カルシウム",g:2800,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マリンテスト リン酸塩",g:3400,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マリンテスト マグネシウム",g:3100,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"スターターキット リーフマチュアー",g:4200,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフテスト Ca カルシウムプロ",g:4200,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフテスト KH/ALK アルカリニティプロ",g:4100,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフテスト Mg マグネシウムプロ",g:4700,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフテスト NO3 硝酸塩プロ",g:5900,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフテスト PO4 リン酸塩プロ",g:5900,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マルチテスト ファンデーションプロ",g:8300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マルチテスト トレースカラーズプロ",g:10700,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"マルチテスト ニュートリエントコントロールプロ",g:9000,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションA カルシウム+ 500ml",g:2400,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションA カルシウム+ 1L",g:3600,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションB KH/アルカリニティ 500ml",g:2400,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションB KH/アルカリニティ 1L",g:3600,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションC マグネシウム 500ml",g:2400,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションC マグネシウム 1L",g:3600,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"トレースカラーズ ABCDパック(各100ml)",g:3500,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"トレースカラーズA アイオディン+ 500ml",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"トレースカラーズB ポタシウム+ 500ml",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"トレースカラーズC アイアン+ 500ml",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"トレースカラーズD バイオアクティブ 500ml",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"NO3:PO4-X 500ml",g:2800,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"NO3:PO4-X 1L",g:4500,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフエナジープラス AB+ 500ml",g:3600,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフエナジープラス AB+ 1L",g:5400,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ファンデーションABC+ スケルタル 1kg",g:4200,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"コンプリートリーフケア スモール",g:8300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"コンプリートリーフケア ミディアム",g:14200,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"コンプリートリーフケア ラージ",g:24300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"アイプタシアX (カーリー駆除)",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"DipX 100ml",g:1500,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"DipX 250ml",g:2300,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"DipX 500ml",g:3100,bk:"RedSea/MMC"},
+{c:"添加剤・テスト剤・水質",n:"バイオダイジェスト 6本",g:2000,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"バイオダイジェスト 12本",g:3000,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"バイオダイジェスト 30本",g:4800,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ストップアンモ 6本",g:2000,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"バイオプティム 6本(淡海両用)",g:2000,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"スタートアップ 6本",g:2000,bk:"Prodibio/MMC"},
+{c:"添加剤・テスト剤・水質",n:"リーフセーフ メディック",g:5600,bk:"Polyplab/MMC"},
+{c:"添加剤・テスト剤・水質",n:"ジェネシス 50ml",g:4400,bk:"Polyplab/MMC"},
+{c:"添加剤・テスト剤・水質",n:"アシッド 50ml",g:5100,bk:"Polyplab/MMC"},
+{c:"添加剤・テスト剤・水質",n:"カラーズ 50ml",g:8600,bk:"Polyplab/MMC"},
+// ── 人工海水・塩 ──
+{c:"人工海水・塩",n:"レッドシーソルト 4kg",g:2500,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"レッドシーソルト 7kg",g:4200,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"レッドシーソルト 22kg",g:10300,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"レッドシーソルト 20kg箱",g:8800,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"レッドシーソルト業務用 25kg",g:10400,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"コーラルプロソルト 7kg",g:4600,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"コーラルプロソルト 22kg",g:11500,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"コーラルプロソルト 20kg箱",g:10100,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"リーフベース ホワイト 10kg(砂)",g:3500,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"メジャーカップ",g:450,bk:"RedSea/MMC"},
+{c:"人工海水・塩",n:"シーウォーターリフレクトメーター(比重計)",g:10700,bk:"RedSea/MMC"},
+// ── 床砂 ──
+{c:"床砂",n:"アラゴナイトサンド(底床用)　9㎏",g:4400},
+{c:"床砂",n:"サンゴ砂M(底床用)　15㎏",g:1880},
+{c:"床砂",n:"サンゴ砂パウダー(底床用)　15㎏",g:2800},
+{c:"床砂",n:"ジェックス　アクアスケイプサンド　2kg",g:680},
+{c:"床砂",n:"スドー　ピンクサンド　2.2㎏",g:430},
+{c:"床砂",n:"ADA　メコンサンド　5kg",g:1350},
+{c:"床砂",n:"ガーネットストーン　10kg",g:4500},
+{c:"床砂",n:"GEX ピュアブラック 8L",g:2450},
+{c:"床砂",n:"ADA　アマゾニア　3L　 Ver.2",g:1300},
+{c:"床砂",n:"ADA　アマゾニア　9L　 Ver.2",g:2800},
+{c:"床砂",n:"ADA　アマゾニア　パウダー　9L",g:1550},
+{c:"床砂",n:"JUN プラチナソイル ノーマル 8L 　（吸着系ソイル）",g:1550},
+{c:"床砂",n:"ADA パワーサンド・ベーシックS 2L",g:1800},
+{c:"床砂",n:"ADA　パワーサンドスペシャルＭ　6L",g:5700},
+{c:"床砂",n:"ADA　パワーサンドスペシャルL　6L",g:5700},
+{c:"床砂",n:"ADA　コロラドサンド　8kg",g:2400},
+{c:"床砂",n:"ADA　ラプラタサンド　8kg",g:2400},
+{c:"床砂",n:"ADA　アクアグラベル　8kg",g:2400},
+{c:"床砂",n:"スドー　ボトムサンド　5kg",g:920},
+{c:"床砂",n:"桜大磯砂　1kg",g:920},
+{c:"床砂",n:"クリスタルオレンジ　5kg",g:950},
+{c:"床砂",n:"大磯砂　ミディアム　9L",g:2680},
+{c:"床砂",n:"ブルカミアグリーン　8kg",g:3880},
+{c:"床砂",n:"GEX 水洗い不要天然砂 リバーブレンド　0.5kg",g:220},
+{c:"床砂",n:"ADA　アマゾニア　9L　 Ver.2",g:2800},
+{c:"床砂",n:"ADA パワーサンド・ベーシックS 2L",g:1800},
+{c:"床砂",n:"ADA　アマゾニア　9L　 Ver.2",g:2800},
+{c:"床砂",n:"ADA　パワーサンドスペシャルＭ　6L",g:5700},
+{c:"床砂",n:"ADA　アマゾニア　9L　 Ver.2",g:2800},
+{c:"床砂",n:"ADA　パワーサンドスペシャルＭ　6L",g:5700},
+{c:"床砂",n:"①バクター100　②トルマリン　③クリアスーパー　各一個ずつ（2000円）",g:6000},
+// ── レイアウト素材・ライブロック ──
+{c:"レイアウト素材・ライブロック",n:"オーシャンロック　人工ライブロック　MLサイズ　20kg",g:33200},
+{c:"レイアウト素材・ライブロック",n:"白系ライブロック　　MLサイズ　20kg",g:19800},
+{c:"レイアウト素材・ライブロック",n:"白系ライブロック　　MLサイズ　30kg",g:29700},
+{c:"レイアウト素材・ライブロック",n:"希少100％沖縄産ライブロック　超特価　MLサイズ　20kg",g:19800},
+{c:"レイアウト素材・ライブロック",n:"希少100％沖縄産ライブロック　超特価　MLサイズ　30kg",g:29700},
+{c:"レイアウト素材・ライブロック",n:"カラーサンゴ岩　各種",g:1700},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　一式",g:9500},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　一式",g:13500},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　一式",g:19500},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　一式",g:24500},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　一式",g:27500},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ",g:1600},
+{c:"レイアウト素材・ライブロック",n:"カラーレプリカサンゴ　および貝殻等　一式",g:16000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　一式",g:10000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　一式",g:20000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　一式",g:25000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　一式",g:35000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　一式",g:40000},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:9000},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:14000},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:16500},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:23000},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:32500},
+{c:"レイアウト素材・ライブロック",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:45000},
+{c:"レイアウト素材・ライブロック",n:"溶岩石　Mサイズ　10kg",g:5000},
+{c:"レイアウト素材・ライブロック",n:"意匠登録済み　造花・人工水草類　各種",g:8900},
+{c:"レイアウト素材・ライブロック",n:"飾りサンゴ岩",g:3000},
+{c:"レイアウト素材・ライブロック",n:"ドラゴンストーン　各サイズミックス　10kg",g:6800},
+{c:"レイアウト素材・ライブロック",n:"風山石　各サイズミックス　10kg",g:6800},
+{c:"レイアウト素材・ライブロック",n:"山水石　Mサイズ　10kg",g:12000},
+{c:"レイアウト素材・ライブロック",n:"黒甲石 サイズミックス 5kg",g:2800},
+{c:"レイアウト素材・ライブロック",n:"タンジェリンレイヤーストーン　S・Mサイズ　10〜15cm 8kg",g:13800},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール A (45×33×22cm)",g:9300,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール B (49×36×17cm)",g:10000,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール C",g:8900,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール D",g:7900,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール E",g:4600,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール F",g:4900,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール G",g:6500,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックモジュール H",g:3800,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックリング 5cm",g:1300,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックリング 10cm",g:2100,bk:"ATS/MMC"},
+{c:"レイアウト素材・ライブロック",n:"ライブロックリング 40cm",g:8100,bk:"ATS/MMC"},
+// ── 水草 ──
+{c:"水草",n:"水草各種 30cm水槽用（ミクロソリウム・アヌビアスナナ・タイガーロータス等）",g:20000},
+{c:"水草",n:"水草各種 60cm水槽(スリム)用（ミクロソリウム・アヌビアスナナ・タイガーロータス等）",g:25000},
+{c:"水草",n:"水草各種 60cm水槽用（ミクロソリウム・アヌビアスナナ・タイガーロータス等）",g:30000},
+{c:"水草",n:"水草各種 90cm水槽用（ミクロソリウム・アヌビアスナナ・タイガーロータス等）",g:35000},
+{c:"水草",n:"水草各種 120cm水槽用（ミクロソリウム・アヌビアスナナ・タイガーロータス等）",g:45000},
+{c:"水草",n:"水草　ミクロソリュームナローリーフ",g:600},
+{c:"水草",n:"水草　アヌビアス・ナナ",g:500},
+{c:"水草",n:"水草　アヌビアス・ナナプチ",g:500},
+{c:"水草",n:"水草　ボルビティス・ヒュディロティ",g:1600},
+{c:"水草",n:"水草　タイガーロータスレッド",g:800},
+{c:"水草",n:"水草　クリプトコリネ・ウェンティグリーン",g:450},
+{c:"水草",n:"水草　ウィローモス（マット）",g:800},
+{c:"水草",n:"水草　ハイグロ　ピンナティフィダ",g:550},
+{c:"水草",n:"水草　アヌビアス　ヘテロフィラ",g:900},
+{c:"水草",n:"水草　バリスネリア・スレンダーリーフ",g:250},
+{c:"水草",n:"水草　ウィローモス（マット）",g:800},
+{c:"水草",n:"水草　南米ウィローモス（マット）",g:880},
+{c:"水草",n:"水草一式（グロッソ、ミクロソリウム、ウィローモス）",g:20000},
+{c:"水草",n:"水草　侘び草　有茎草MIX　φ9",g:1800},
+{c:"水草",n:"水草　侘び草　グリーン・ロターラ　φ6.5",g:1200},
+{c:"水草",n:"水草　侘び草　グロッソスティグマ　φ5",g:950},
+{c:"水草",n:"水草　佗び草 水辺MIX　オモダカなど（夏限定）　φ9",g:950},
+{c:"水草",n:"水草　侘び草　エキノ・クリプトMIX　 9φ",g:1800},
+{c:"水草",n:"水草　侘び草 しずく（水上葉）　φ9",g:1800},
+{c:"水草",n:"ヒメトクサ　ビオトーブ",g:900},
+{c:"水草",n:"ネオレゲリア",g:620},
+{c:"水草",n:"コケ一式（マメヅタ、シノブゴケ、コツボゴケ、ハイゴケなど）",g:30000},
+{c:"水草",n:"水草一式（ナナプチ、ミクロソリウム、ウィローモス）",g:28000},
+{c:"水草",n:"観葉植物一式（シダ系、ラン系の植物）",g:40000},
+{c:"水草",n:"観葉植物一式（香丁木、ガジュマルなど）",g:14000},
+{c:"水草",n:"造花・レプリカ観葉植物一式（シダ系、ラン系、赤、紫、黄色系の植物）",g:4000},
+{c:"水草",n:"カミハタ　Rio800水中ポンプ　6.8（L／m）",g:2430},
+{c:"水草",n:"リオプラス専用 テラリウム用接続パーツセット  分岐パーツ",g:700},
+{c:"水草",n:"DOOA ミストメーカー　（霧発生器）",g:6800},
+{c:"水草",n:"DOOA ミストフローキャップ",g:1300},
+{c:"水草",n:"カミハタ　Rio1100水中ポンプ　22（L／m）",g:2930},
+{c:"水草",n:"エアーチューブ黒3ｍ",g:270},
+{c:"水草",n:"エアーチューブ分岐　JEBO 10又分岐",g:2400},
+{c:"水草",n:"発泡ウレタンスプレー",g:1280},
+{c:"水草",n:"魚各種(メダカ・シマドジョウ等)",g:2000},
+{c:"水草",n:"テトラ メダカ産卵繁殖用水つくリ 250ml  （ミネラル ヨウ素 ビタミン剤）",g:380},
+{c:"水草",n:"GEX リーフグロー エクストリーム 卓上ライト 600lm 色温度3種類",g:5800},
+{c:"水草",n:"カミハタ 50Hz リオプラス 底面フィルターセット",g:2350},
+{c:"水草",n:"GEX ピコロカ High コンパクト 底面フィルターセット",g:2100},
+{c:"水草",n:"テトラ 26℃ミニヒーター 20W カバー付き",g:990},
+{c:"水草",n:"GEX エキゾテラ タートルバンク M 亀 浮島　W298×D178×H54mm",g:1780},
+{c:"水草",n:"紫外線ライトセット 26W レプタイルUVB 100+クリップスタンド付き",g:4680},
+{c:"水草",n:"ビバリア スパイラルUVB フォレスト 26W",g:2200},
+{c:"水草",n:"ビバリア 太陽NEO NP　ライトクリップ",g:2600},
+{c:"水草",n:"ビバリア 太陽NEO ランプカバー",g:1600},
+{c:"水草",n:"アクロ  パルダリウムケージ 45×30×45cm 底面排水仕様",g:26000},
+{c:"水草",n:"プロテクションマット 45cm水槽用 45×27cm 厚さ10mm",g:700},
+{c:"水草",n:"EPIWEB Panels 290×440×2cm エピウェブ",g:1100},
+{c:"水草",n:"EPIWEB Panels用 プラスチックピン U-12 12個入り",g:500},
+{c:"水草",n:"ピクタ 極床 植えれる君 A4 厚さ1cm 3枚入り",g:2300},
+{c:"水草",n:"アズー アクアスケーピンググルー 4g×2本入",g:600},
+{c:"水草",n:"システムパルダ 30　（300*300*450H）",g:57000},
+{c:"水草",n:"システムパルダ 60　（600*300*450H）",g:73000},
+{c:"水草",n:"クリスマスモス（佗び草マット）",g:2000},
+{c:"水草",n:"コツボゴケ　4パック",g:2000},
+{c:"水草",n:"シノブゴケ 1パック分",g:900},
+{c:"水草",n:"ビバリウムプランツ レインボーファン",g:900},
+{c:"水草",n:"テラリウム 苔 シダマメヅタ",g:900},
+{c:"水草",n:"シダ(羊歯)ヌリトラノオ(塗虎の尾)3号",g:900},
+{c:"水草",n:"シダ(羊歯)リョウメンシダ(両面羊歯)3号(1ポット)",g:1000},
+{c:"水草",n:"ベゴニア ルゾネンシス(1ポット)原種ベゴニア",g:2800},
+{c:"水草",n:"ビバリウムプランツ ヒメカナワラビ 3cmポット",g:900},
+{c:"水草",n:"GEX 水洗い不要天然砂 リバーブレンド　0.5kg",g:220},
+{c:"水草",n:"溶岩石　Mサイズ　10kg",g:5000},
+{c:"水草",n:"アク抜き済み細枝流木一式　適量(大きさにより個数は変動)",g:9000},
+// ── CO2 ──
+{c:"CO2",n:"ADA　スピードレギュレータ",g:19530,bk:"ＣＯ2機器"},
+{c:"CO2",n:"ADA　電磁弁ＥＬバルブ",g:7300,bk:"ＣＯ2電磁制御"},
+{c:"CO2",n:"ADA　ボールバルブ",g:1560,bk:"ＣＯ2コネクタ"},
+{c:"CO2",n:"ADA　グラスカウンター",g:3650,bk:"ＣＯ2コネクタ"},
+{c:"CO2",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:350,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"KS　CO2ミスト",g:650,bk:"ＣＯ2出石"},
+{c:"CO2",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16500,bk:"ＣＯ2ボンベ"},
+{c:"CO2",n:"ADA　アラッシュレギュレーター",g:9880,bk:"ＣＯ2機器"},
+{c:"CO2",n:"ADA　CO2アドバンスシステム",g:21000,bk:"ＣＯ2機器"},
+{c:"CO2",n:"JARDLI レギュレーター スピードコントローラー・電磁弁一体型",g:8200},
+{c:"CO2",n:"JARDLI　ガラス製co2拡散器 バブルカウントディフューザー　φ20",g:1300,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"アルミ合金 CO2 バブルカウンター",g:1100},
+{c:"CO2",n:"ADA スピードレギュレーター（大型ボンベ用ゲージ）",g:26000},
+{c:"CO2",n:"ADA 電磁弁／EL-バルブ",g:9120},
+{c:"CO2",n:"ADA Co2ディフューザー　パレングラス・ビートルφ20",g:9800,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"ADA Co2ディフューザー　パレングラス・ビートルφ40",g:10600,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"ADA Co2ディフューザー　パレングラス・ビートルφ50",g:12700,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"ADA ツイストカウンター",g:14000,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"ADA CO2グラスカウンター",g:5300},
+{c:"CO2",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒2ｍ",g:620,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"水心SSPP-2Sエアポンプ",g:2430},
+{c:"CO2",n:"小型エアストーン",g:105},
+{c:"CO2",n:"エアーチューブ白5ｍ",g:260},
+{c:"CO2",n:"エアー逆止弁",g:280},
+{c:"CO2",n:"CO2　タワー／20（ボンベ付き）",g:70800,bk:"ＣＯ2ボンベ"},
+{c:"CO2",n:"ADA スピードレギュレーター",g:31200},
+{c:"CO2",n:"ADA Co2ディフューザー　ビートル50",g:15600,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"ADA ツイストカウンター",g:16800,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:420,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"ADA　NAコントロールタイマー",g:36000},
+{c:"CO2",n:"水心SSPP-2Sエアポンプ",g:2910},
+{c:"CO2",n:"小型エアストーン",g:130},
+{c:"CO2",n:"エアーチューブ白5ｍ",g:310},
+{c:"CO2",n:"エアー逆止弁",g:330},
+{c:"CO2",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16500,bk:"ＣＯ2ボンベ"},
+{c:"CO2",n:"ADA スピードレギュレーター",g:26000},
+{c:"CO2",n:"ADA 電磁弁／EL-バルブ",g:9110},
+{c:"CO2",n:"ADA Co2ディフューザー　パレングラス・ビートルφ20",g:9800,bk:"ＣＯ２用拡散器"},
+{c:"CO2",n:"ADA CO2グラスカウンター",g:5300},
+{c:"CO2",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:420,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"水心SSPP-2Sエアポンプ",g:2910},
+{c:"CO2",n:"小型エアストーン",g:130},
+{c:"CO2",n:"エアーチューブ白5ｍ",g:310},
+{c:"CO2",n:"エアー逆止弁",g:330},
+{c:"CO2",n:"CO2添加セット（小型ボンベ・レギュレーター・チューブなど）",g:7900,bk:"ＣＯ2機器"},
+{c:"CO2",n:"CO2添加セット（小型ボンベ5本・レギュレーター・チューブなど）",g:10500,bk:"ＣＯ2機器"},
+{c:"CO2",n:"ボルクスジャパン CO2ミキサーZ",g:3540,bk:"ＣＯ２用拡散器（インライン）"},
+{c:"CO2",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16590,bk:"ＣＯ2ボンベ"},
+{c:"CO2",n:"ADA スピードレギュレーター",g:26000},
+{c:"CO2",n:"ADA 電磁弁／EL-バルブ",g:10300},
+{c:"CO2",n:"ボルクスジャパン CO2ミキサーZ",g:3540,bk:"ＣＯ２用拡散器（インライン）"},
+{c:"CO2",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:350,bk:"ＣＯ2ホース"},
+{c:"CO2",n:"水心SSPP-2Sエアポンプ",g:2430},
+{c:"CO2",n:"小型エアストーン",g:105},
+{c:"CO2",n:"エアーチューブ白5ｍ",g:260},
+{c:"CO2",n:"エアー逆止弁",g:280},
+{c:"CO2",n:"魚各種(ネオンテトラ・プラティ・プレコ等)",g:5000},
+{c:"CO2",n:"魚各種(アフリカンシクリット・プレコ等)",g:5000},
+{c:"CO2",n:"海水魚　各種(カクレクマノミ・デバスズメダイ・ナンヨウハギ等)",g:17000},
+{c:"CO2",n:"珊瑚礁　本物　各種　(大きさや種類によって個数は変動)",g:5500},
+{c:"CO2",n:"H&S　HS-250",g:37800},
+{c:"CO2",n:"H&S　HS-400",g:40000},
+{c:"CO2",n:"H&S　HS-850",g:60000},
+{c:"CO2",n:"H&S　HS-1500",g:103000},
+{c:"CO2",n:"H&S　HS-2200",g:130000},
+{c:"CO2",n:"H&S　HS-3000",g:150000},
+{c:"CO2",n:"Reef Live Inspire Skimmer300",g:35000},
+{c:"CO2",n:"Reef Live Inspire Skimmer500",g:46000},
+{c:"CO2",n:"Reef Live Inspire Skimmer800",g:55000},
+{c:"CO2",n:"Reef Live Inspire Skimmer2200",g:78000},
+{c:"CO2",n:"OCTO Regal Protein Skimmer　150-S",g:55000},
+{c:"CO2",n:"OCTO Regal Protein Skimmer　200-S",g:77000},
+{c:"CO2",n:"OCTO Regal Protein Skimmer　250-S",g:92000},
+{c:"CO2",n:"OCTO Regal Protein Skimmer　300-S",g:105000},
+{c:"CO2",n:"MAX SPECT MJ -SK　200　165＊165＊474H",g:41700},
+{c:"CO2",n:"MAX SPECT MJ -SK　400",g:54800},
+{c:"CO2",n:"MAX SPECT MJ -SK　800",g:90750},
+{c:"CO2",n:"レッドシー　REEFER　Skimmer 300",g:58300},
+{c:"CO2",n:"レッドシー　REEFER　Skimmer 600",g:72200},
+{c:"CO2",n:"レッドシー　REEFER　Skimmer 900",g:83200},
+{c:"CO2",n:"ゼンスイ 外掛式プロテインスキマー エターナルナノスキマー QQ3",g:78000},
+// ── 接着剤・サンゴ用品 ──
+{c:"接着剤・サンゴ用品",n:"コーラルグルー 30ml",g:2100,bk:"EcoTech/LSS"},
+{c:"接着剤・サンゴ用品",n:"コーラルグルー 75ml",g:4100,bk:"EcoTech/LSS"},
+{c:"接着剤・サンゴ用品",n:"コーラルグルー 295ml",g:10000,bk:"EcoTech/LSS"},
+{c:"接着剤・サンゴ用品",n:"アクアリウムグルー 3本パック",g:600,bk:"ZOOX/MMC"},
+{c:"接着剤・サンゴ用品",n:"アクアリウムグルー (1箱25個)",g:3400,bk:"ZOOX/MMC"},
+{c:"接着剤・サンゴ用品",n:"コーラルカッタープロ S",g:4100,bk:"ZOOX/MMC"},
+{c:"接着剤・サンゴ用品",n:"コーラルカッタープロ L",g:5100,bk:"ZOOX/MMC"},
+{c:"接着剤・サンゴ用品",n:"アクアスケープ マリンスタイル(石灰藻)",g:1800,bk:"DD/MMC"},
+{c:"接着剤・サンゴ用品",n:"アクアスケープ フリースタイル(グレー)",g:1500,bk:"DD/MMC"},
+// ── メンテ用品・マグネットクリーナー ──
+{c:"メンテ用品・マグネットクリーナー",n:"マグニートー S (6-8mm)",g:2500,bk:"ZOOX/MMC"},
+{c:"メンテ用品・マグネットクリーナー",n:"マグニートー M (9-12mm)",g:3700,bk:"ZOOX/MMC"},
+{c:"メンテ用品・マグネットクリーナー",n:"マグニートー L (15-20mm)",g:6200,bk:"ZOOX/MMC"},
+{c:"メンテ用品・マグネットクリーナー",n:"マグニートー ミニ (4-8mm)",g:1300,bk:"ZOOX/MMC"},
+{c:"メンテ用品・マグネットクリーナー",n:"ブレードランナー スタンダード",g:7400,bk:"DD/MMC"},
+{c:"メンテ用品・マグネットクリーナー",n:"ブレードランナー ストロング",g:8700,bk:"DD/MMC"},
+// ── 餌・フード ──
+{c:"餌・フード",n:"マリンペレットXS 70g",g:1200,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"アルジーペレットXS 70g",g:1200,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"プラチナマリンペレットXS 70g",g:1200,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"トロピカルペレットXS 70g(淡水)",g:700,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"LPSコーラルペレットS 60g",g:1700,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"アネモネペレットS+ 60g",g:1700,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"ミックスドリーフフード 50g",g:1900,bk:"Vitalis/MMC"},
+{c:"餌・フード",n:"ナノ リーフロイズ 37g",g:2000,bk:"Polyplab/MMC"},
+{c:"餌・フード",n:"リーフロイズ 75g",g:3200,bk:"Polyplab/MMC"},
+{c:"餌・フード",n:"リーフロイズ 150g",g:5900,bk:"Polyplab/MMC"},
+{c:"餌・フード",n:"ポリプブースター 100ml",g:3100,bk:"Polyplab/MMC"},
+{c:"餌・フード",n:"ニブルビッツ ハービボア 10mm",g:1100,bk:"ZOOX/MMC"},
+{c:"餌・フード",n:"ニブルビッツ ハービボア 20mm",g:1400,bk:"ZOOX/MMC"},
+{c:"餌・フード",n:"ニブルビッツ カーニボア 10mm",g:1100,bk:"ZOOX/MMC"},
+{c:"餌・フード",n:"ニブルビッツ カーニボア 20mm",g:1400,bk:"ZOOX/MMC"},
+{c:"餌・フード",n:"マリンデラックス 100ml",g:800,bk:"H&S/MMC"},
+{c:"餌・フード",n:"マリンデラックス 250ml",g:1700,bk:"H&S/MMC"},
+{c:"餌・フード",n:"マリンデラックス 500ml",g:2400,bk:"H&S/MMC"},
+{c:"餌・フード",n:"マリンデラックス 1000ml",g:3600,bk:"H&S/MMC"},
+// ── マウント・吊具・アクセサリー ──
+{c:"マウント・吊具・アクセサリー",n:"HMS Single Arm Kit",g:12000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 2-Arm Kit",g:15000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS hanging kit",g:7000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 24\" rail (64.7cm)",g:8800,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 36\" rail (95.3cm)",g:12500,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 48\" rail (126.1cm)",g:15800,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 60\" rail (156.4cm)",g:18500,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"HMS 72\" rail (187.5cm)",g:20900,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Edge Hanging Kit (ワイヤー吊具)",g:6400,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Edge Flex Arm (44HD専用)",g:12000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Edge 44HD/68HD Mounting Kit",g:6600,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Blade Hanging Kit S (1-3連)",g:10100,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Blade Hanging Kit M (2-4連)",g:13000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Blade Hanging Kit L (5-6連)",g:15500,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Blade Hybrid Mount Kit",g:11200,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"AI Prime Hanging Kit",g:4300,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"AI Prime Tank Mount",g:5800,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Prime Flex Arm 12\"",g:5100,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Prime Flex Arm 18\"",g:6400,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Hydra Flex Arm 18\"",g:11000,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Hanging Kit Eco (H26/32/52/64)",g:2600,bk:"AI/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"Hanging Kit Radion (G1-G6共通)",g:7500,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Tank Mount XR15/XR30",g:18000,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Arm Kit (XR15/30 2本)",g:22200,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Track-0205 (52.1cm)",g:9200,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Track-0305 (77.5cm)",g:11300,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Track-0405 (102.9cm)",g:13500,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Track-0505 (128.3cm)",g:16000,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RMS Hanging Kit",g:6900,bk:"Radion/LSS"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 60 ハンギングキット",g:4200,bk:"RedSea/MMC"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 115 ハンギングキット",g:4200,bk:"RedSea/MMC"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 170 ハンギングキット",g:4200,bk:"RedSea/MMC"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 60 ユニバーサルマウントアーム",g:8400,bk:"RedSea/MMC"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 115 ユニバーサルマウントアーム",g:12800,bk:"RedSea/MMC"},
+{c:"マウント・吊具・アクセサリー",n:"RL G2 170 ユニバーサルマウントアーム",g:12800,bk:"RedSea/MMC"},
+// ── その他 ──
+{c:"その他",n:"エサタイマー",g:4870},
+{c:"その他",n:"繰り返しタイマー",g:3630},
+{c:"その他",n:"ニッソー　ウクリーナーM",g:810},
+{c:"その他",n:"ニッソー　ウクリーナーS",g:480},
+{c:"その他",n:"ニッソー　ウクリーナーM",g:630},
+{c:"その他",n:"ニッソー　ウクリーナーL",g:890},
+{c:"その他",n:"FLIPPER　Nano　マグフロート",g:3800},
+{c:"その他",n:"FLIPPER　standard　マグフロート",g:4900},
+{c:"その他",n:"FLIPPER　Max　マグフロート",g:9000},
+{c:"その他",n:"レッドシー　ReefDose2　ドーシングポンプ",g:39200},
+{c:"その他",n:"レッドシー　ReefDose4　ドーシングポンプ",g:53000},
+{c:"その他",n:"レッドシー　ReefDose　チューブキット　赤/黄",g:7600},
+{c:"その他",n:"レッドシー　ReefDose　チューブキット　青/緑",g:7600},
+{c:"その他",n:"フロートステーション　スクエア",g:800},
+{c:"その他",n:"稚魚の隔離ケース　透明パンチ板水中タイプ　20cmx10cmx10cm",g:2100},
+{c:"その他",n:"黒or透明延長コード・分岐タップ・塩ビパイプ(変換用)",g:1500},
+{c:"その他",n:"ADA　ブライティーK/STEP1",g:1400},
+{c:"その他",n:"ブラックホール　大型水槽用",g:1500},
+{c:"その他",n:"送料",g:12000},
+{c:"その他",n:"SEALIFE　714L",g:4800},
+{c:"その他",n:"コラリア　エボリューション　３２００",g:6840},
+{c:"その他",n:"ミストメーカー　コントローラーセット",g:4800},
+{c:"その他",n:"湧き水システム　Rio400+、配管材",g:2720},
+{c:"その他",n:"漏電保護タップ",g:2930},
+{c:"その他",n:"湯沸しポット",g:9100},
+// ── オプション ──
+{c:"オプション",n:"ADA　スピードレギュレータ",g:19530,bk:"ＣＯ2機器"},
+{c:"オプション",n:"ADA　電磁弁ＥＬバルブ",g:7300,bk:"ＣＯ2電磁制御"},
+{c:"オプション",n:"ADA　ボールバルブ",g:1560,bk:"ＣＯ2コネクタ"},
+{c:"オプション",n:"ADA　グラスカウンター",g:3650,bk:"ＣＯ2コネクタ"},
+{c:"オプション",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:350,bk:"ＣＯ2ホース"},
+{c:"オプション",n:"KS　CO2ミスト",g:650,bk:"ＣＯ2出石"},
+{c:"オプション",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16500,bk:"ＣＯ2ボンベ"},
+{c:"オプション",n:"水心SSPP-2Sエアポンプ",g:2430},
+{c:"オプション",n:"エアーチューブ黒3ｍ",g:270},
+{c:"オプション",n:"エアー逆止弁",g:280},
+{c:"オプション",n:"小型エアストーン",g:110},
+{c:"オプション",n:"繰り返しタイマー",g:3630},
+{c:"オプション",n:"ADA　スピードレギュレータ",g:19530,bk:"ＣＯ2機器"},
+{c:"オプション",n:"ADA　電磁弁ＥＬバルブ",g:7300,bk:"ＣＯ2電磁制御"},
+{c:"オプション",n:"ADA　ボールバルブ",g:1560,bk:"ＣＯ2コネクタ"},
+{c:"オプション",n:"ADA　グラスカウンター",g:3650,bk:"ＣＯ2コネクタ"},
+{c:"オプション",n:"ADA　耐圧ﾁｭｰﾌﾞ　黒3ｍ",g:350,bk:"ＣＯ2ホース"},
+{c:"オプション",n:"KS　CO2ミスト",g:650,bk:"ＣＯ2出石"},
+{c:"オプション",n:"CO2　大型ﾎﾞﾝﾍﾞ1.5L",g:16500,bk:"ＣＯ2ボンベ"},
+{c:"オプション",n:"水心SSPP-2Sエアポンプ",g:2430},
+{c:"オプション",n:"エアーチューブ黒3ｍ",g:270},
+{c:"オプション",n:"エアー逆止弁",g:280},
+{c:"オプション",n:"小型エアストーン",g:110},
+{c:"オプション",n:"ADAブライティーＫ/ステップ1",g:1400},
+{c:"オプション",n:"コトブキ　ツインライト900",g:7623},
+{c:"オプション",n:"ADA　NAランプ32W",g:1350},
+{c:"オプション",n:"繰り返しタイマー",g:3630},
+{c:"オプション",n:"ADA　アマゾニア　9L",g:2800},
+{c:"オプション",n:"特注吊り下げ式ライト用ステンレスステー１８００Ｈ＊５００Ｗ",g:27800},
+{c:"オプション",n:"吊り下げ式ライトステー固定用　Ｕ字ロック　黒",g:262},
+{c:"オプション",n:"ＡＤＡソーラーⅠ　(吊り下げ式ライト本体)",g:39616},
+];
+
+// 商品カテゴリ（見積もりタブ用）
+const PCATS=["水槽", "水槽台・架台", "フード（上部カバー）", "ろ過槽・ろ過機・ろ材", "エーハイム2260用", "ポンプ（循環）", "水中ポンプ仕様", "水流ポンプ", "クーラー", "殺菌灯", "ライト・LED", "ヒーター", "エアポンプ", "プロテインスキマー", "リアクター", "流動式濾過リアクター", "自動給水・ATO", "添加剤・テスト剤・水質", "人工海水・塩", "床砂", "レイアウト素材・ライブロック", "水草", "CO2", "接着剤・サンゴ用品", "メンテ用品・マグネットクリーナー", "餌・フード", "マウント・吊具・アクセサリー", "その他", "オプション"];
+function teiji(g){return Math.ceil(g*1.2/10)*10;}
+function yen(n){return n.toLocaleString('ja-JP');}
+
+
+const D=[
+// ───── 生体（魚） ─────
+{id:1, cat:"gyo",
+ q:["魚が死んだ・元気がない（少数）"],
+ alt:["お魚がなくなった","数匹死んだ","元気がない","横たわっている"],
+ ans:"心配に寄り添い、まず状況確認（何匹・どの魚・エアー・濁り）。原因は<b>断定せず</b>、亡くなった子は<b>次回メンテでまとめて回収・入れ替え</b>。多数死・全滅は別トピック（緊急）。",
+ scripts:[{l:"受け止め＋状況確認", t:"ご連絡ありがとうございます。お魚が亡くなってしまったんですね…ご心配をおかけして申し訳ございません。\n今、何匹くらい・どのお魚に症状が出ていますか？ エアー（泡）は出ていますか？ 水が白く濁ったりしていませんか？\n水槽は生き物なので、設置環境や水質で突発的に体調を崩すことがございます。亡くなってしまった子は、次回メンテの際にまとめて回収・入れ替えさせていただきますのでご安心ください。それまでに悪化するようでしたら、すぐにご連絡ください。"}],
+ notes:[{t:"補償の話から入らない。まず心配に寄り添う。"},{t:"原因を決めつけない（「餌のあげすぎですね」等NG）。不明なら不明と正直に。"}],
+ refs:[{tag:"約款2-1",txt:"魚の死亡・水草等の枯れの補償は致しかねます（補償ご希望は別途保険）。"},{tag:"契約書",txt:"設置から3ヶ月は水が出来上がっておらず、比較的生体が死にやすい時期。"}],
+ esc:"多数死・全滅・「メンテのせい」と強い不満 → 「魚が大量に死んだ」の対応＋リーダーに相談。"},
+
+{id:2, cat:"gyo",
+ q:["死んだ魚を、次回を待たずにまた持ってきて／回収してほしい"],
+ alt:["今週中に持ってきて","次回まで待てない","また入れて"],
+ ans:"まず共感をたっぷり。馴染めなかった子も含めて<b>次回メンテでまとめて入れる</b>のでご安心を。今すぐ追加は魚にも酷で、また悲しい思いをさせかねないので、<b>メンテのタイミングが結局ベスト</b>と伝える。",
+ scripts:[
+  {l:"基本の返し", t:"ご連絡ありがとうございます。お魚が亡くなってしまったんですね…可哀想でしたね。\n新しい水槽の環境に上手く馴染めなかったのかもしれません。自然界の生き物なので、どんなに上手く管理していても、馴染めなかったり、メンテまでの間に何匹か死んでしまうことはどうしても起きてしまうんです。\nですので大変申し訳ないのですが、馴染めなかった子も含めて、月1回のメンテナンスの際にまとめて入れさせていただいておりますのでご安心ください。\nもちろん、大量に死んでしまった等があれば、それは生命力ではなく機械トラブル等が考えられますので、すぐに緊急対応いたします。"},
+  {l:"死因を聞かれたら", t:"原因としては、問屋での飼育環境との違い・輸送中のストレス・既存の魚との相性・（新規の場合）バクテリアがまだ根付いておらず水質が追いつかなかった、などが考えられますが、実際の原因は分かり兼ねてしまいます。\n直近で追加しても、〇〇様にまた悲しい思いをさせてしまったり、お魚にも可哀想なことになりかねません。次のメンテで様々な確認をしたうえで追加した方が、長い目で見てより良い水槽をご提供できると考えています。"}],
+ notes:[{t:"共感を<b>長く</b>とり、満足されるまで聞き手に回る。角を立てない言い方で。"},{t:"今入れても死んでしまう可能性が高いことを伝える。死因は断定しない。"},{t:"「やってあげたいが、お魚のためにやるべきでない」という姿勢で。出来なくて申し訳ない態度を伝える。"}],
+ esc:"多めに死んだ／ナイト系・飲食店など商業目的／お客様のタイプによっては、この返しをしてはいけないケースあり。迷ったらリーダーに相談。"},
+
+{id:3, cat:"gyo",
+ q:["魚が大量に死んだ・全滅・爆死"],
+ alt:["みんな死んでる","全滅","爆死","たくさん死んだ"],
+ ans:"これは<b>生命力ではなく、機械トラブルや水質の急変</b>が考えられる。決めつけず至急確認。ポンプ・エアー・濁り・臭いをチェックし、<b>緊急で訪問</b>。",
+ scripts:[{l:"緊急対応", t:"ご連絡ありがとうございます。お魚が一度にたくさん…大変申し訳ございません、すぐに確認させてください。\nこれだけ一度に亡くなる場合は、お魚の生命力ではなく、ポンプやヒーターなどの機械トラブルや、水質の急変が考えられます。\nまず、ろ過とエアー（泡）が動いているか、水が白く濁ったり臭いがしないか見ていただけますか。至急、緊急で伺って対応いたします。"}],
+ notes:[{t:"「お客様の責任」と取れる言い方はしない。機械・水質を疑い、至急訪問。"}],
+ refs:[{tag:"約款2-11",txt:"水質トラブルは無料で緊急出張（作業内容により加算あり）。"}],
+ esc:"大量死・全滅は<b>必ずリーダーに即連絡</b>（代打手配・原因調査）。"},
+
+{id:4, cat:"gyo",
+ q:["魚が病気（白点病・ポップアイ等）"],
+ alt:["白い点","ハクテン病","ヒレが溶けた","目が腫れた","病気"],
+ ans:"病気の相談。症状を確認し、断定せず一般対応（水換え等）＋担当が確認。広がりが早い・高額魚は早めに訪問。",
+ scripts:[{l:"受け止め＋確認", t:"ご連絡ありがとうございます。お魚の様子が気になりますよね。白い点が出ている・ヒレや目が腫れている、など、今どんな症状か教えていただけますか？\n病気の可能性もありますので、水換えなどで様子を見つつ、担当が確認して対応いたします。広がるようでしたら早めに伺いますね。"}],
+ notes:[{t:"病名を断定しない。重症・広がりが早い場合は早めに訪問。"}],
+ esc:"高額生体・複数発症はリーダーに相談。"},
+
+{id:5, cat:"gyo",
+ q:["イソギンチャク・サンゴ・エビなど無脊椎の不調"],
+ alt:["イソギンチャク 元気ない","サンゴ","エビが死んだ","海老"],
+ ans:"無脊椎は<b>水質変化に敏感</b>。状態を確認し、致命的でなければ経過観察→次回対応。心配なら早め訪問。",
+ scripts:[{l:"受け止め＋確認", t:"ご連絡ありがとうございます。イソギンチャク（サンゴ）の元気がないのですね。無脊椎の生き物は水質の変化に敏感なので、まず状態を確認させてください。致命的でなければ少し経過を見て、次回メンテで対応します。心配でしたら早めに伺いますね。"}],
+ notes:[{t:"致命傷でなければ経過観察。後日、状態確認の連絡を入れる。"}]},
+
+{id:6, cat:"gyo",
+ q:["お客様の前で、死んだ魚を回収するとき（マナー）"],
+ alt:["死魚 回収 雑","供養","死んだ魚 持ち帰り"],
+ ans:"メンテのゴミ袋に<b>一緒に入れない</b>。供養する旨を伝えて丁寧に回収。<b>死魚回収専用の袋</b>を使う。小型でも大切に思う方は多く、雑な扱いは一瞬で信頼を失う。",
+ scripts:[
+  {l:"声かけ例 ①", t:"アクアリンクでは死んでしまったお魚を供養するようにしておりますので、こちらで供養させていただきますね。"},
+  {l:"声かけ例 ②", t:"可哀想ですが、私の方できちんと埋めてあげるようにしてお持ち帰りしますね。"}],
+ notes:[{do:1,t:"<b>手順：</b>死魚はアミか手で丁寧に掬いペーパーに包む → 専用の死魚回収袋に入れ、ゴミ袋とは必ず分ける → 撤収時も丁寧に扱い、車に戻った後（お客様の目が届かない場所で）ゴミ袋に移す。"},{t:"ペーパーやメラミンスポンジのゴミ袋に、そのまま死魚を入れるのは避ける。"}]},
+
+// ───── 水草・水質 ─────
+{id:7, cat:"kusa",
+ quote:[{n:"水草　アヌビアス・ナナ",g:500},{n:"水草　ミクロソリュームナローリーフ",g:600},{n:"水草　ボルビティス・ヒュディロティ",g:1600},{n:"水草　クリプトコリネ・ウェンティグリーン",g:450},{n:"水草　タイガーロータスレッド",g:800},{n:"水草　ウィローモス（マット）",g:800},{n:"水草各種 入れ替え 30cm水槽用",g:20000},{n:"水草各種 入れ替え 60cm水槽用",g:30000},{n:"水草各種 入れ替え 120cm水槽用",g:45000}],
+ q:["水草が枯れた／交換してほしい"],
+ alt:["葉っぱの色が変わった","水草 変えて","枯れ葉"],
+ ans:"共感 → 状態確認。交換はご契約上<b>別途</b>だが、料金は<b>隠さず先に・やわらかく</b>伝え、個別契約を確認。許容範囲ならメンテで整え、交換が必要なら<b>本数と見積りを先に</b>出して納得いただいてから。",
+ scripts:[{l:"受け止め＋料金は先に率直に", t:"枯れてしまった水草が気になりますよね、ご連絡ありがとうございます。状態を確認させてください。\n水草の交換は、実はご契約上は別途のお見積りになるのですが…（と先にお伝えしたうえで）念のため〇〇様のご契約内容も確認して、正確にご案内させてください。\n枯れの範囲を見て、許容範囲でしたらメンテの際に整えます。交換が必要な場合は、本数とお見積りを先にお伝えしますので、ご納得いただいてから進めますね。"}],
+ notes:[{t:"<b>料金の後出し（作業後・請求段階で初めて別途と伝える）が最大のトラブル要因。</b>料金は隠さず先に、ただし受け止め・共感とセットで。"},{t:"「会社の規約なので」で会話を終えない。必ず個別契約の確認と代替案をセットで。"}],
+ refs:[{tag:"約款2-1",txt:"水草等の枯れの補償は致しかねます。"},{tag:"契約書",txt:"水草の枯れは保険対象外。枯れた場合は別途追加。"}],
+ esc:"「聞いていない」「リースの意味がない」等の強い不満 → 即リーダーに相談。無償交換の判断は上で。"},
+
+{id:8, cat:"kusa",
+ quote:[{n:"リバースグレイン ソフト（pH安定・補助ろ材）",g:8060}],
+ q:["水草の調子が悪い・色が悪い（水道水の硬度が原因 → リバース提案）"],
+ alt:["水草 育たない 硬度","リバースグレイン","浄水器 カチオン"],
+ ans:"水道水の<b>硬度が高い</b>と水草が育ちにくい。浄水器（カチオン）＋カリウム → 改善しなければ<b>リバースソフト6.8を初回サービス</b> → 効果が出たら<b>2回目以降は別途購入</b>を提案。必ず<b>ビフォーアフター写真</b>を撮る。",
+ scripts:[
+  {l:"① 原因説明", t:"水草の状態がイマイチなのですが、原因として、こちらの地域は水道水の硬度が高く、その成分の影響で水草が育ちにくくなっているのかと思います。今後は水道水を軟水化させる浄水器を使いつつ、添加剤を入れて様子を見ようと思います。"},
+  {l:"② リバース投入（初回サービス）", t:"以前お話しした水道水の影響で水草の状態が整わない件ですが、浄水器や添加剤を試したのですが、イマイチ合わないようで…。今の浄水器に加えて、水道水の不純物を吸着除去して水草に適した水質にしてくれる濾過材があるので、今回はこれを試してみようと思います。最近導入したもので高額なため本来は別途になるのですが、効果が確実に出るかまだ分からないので、今回は試しに入れてみますね。効果が出て気に入っていただけたら、それ以降は別途で導入をご検討いただけたら嬉しいです。"},
+  {l:"③ 効果確認 → 継続提案", t:"浄水器に加えて〇ヶ月前に入れた濾過材の効果が出ているようで、水草の状態が大分良くなったのですが、見た目いかがでしょう？（過去の写真を見せて）以前と比べてこれだけ良くなりました。気に入っていただけましたら、良い状態を維持するために引き続き使っていきたいのですが、2回目以降は別途になります。導入させていただいてもよろしいでしょうか？"}],
+ notes:[{do:1,t:"初回はサービスで入れ、<b>効果が出てから</b>2回目以降の別途購入を提案する。"},{do:1,t:"必ず<b>ビフォーアフター写真</b>を撮る。写真で見せると納得度・購買意欲が上がる。"},{t:"まず売るのは商品より<b>「自分（専門家）」</b>。日々のメンテで信頼を勝ち取ることが前提。"}],
+ refs:[{tag:"社内",txt:"リバースグレイン ソフト6.8（60L用）卸660円→販売1,780円（税込）。カチオン併用で効果最大化。"},{tag:"マニュアル",txt:"TH（全硬度）50以下が目標。高いと栄養吸収を阻害。"}]},
+
+{id:9, cat:"kusa",
+ q:["黒髭コケが出る（陰性水草・流木に付着）"],
+ alt:["黒ひげ苔","コケ 流木","黒い苔 取れない"],
+ ans:"原因は<b>リン酸過多・水質悪化・光過多・水流不足</b>。週1で1/3水換え＋リン酸吸着剤＋照明8時間以内＋ブラシ除去or木酢液＋サイアミーズ／ヤマトヌマエビ＋フィルター掃除。",
+ scripts:[{l:"お客様への説明", t:"黒髭コケですね。リン酸や光、水流のバランスで出やすくなるコケです。週1回の水換えと照明時間の調整、コケを食べてくれる生体の追加などで、少しずつ抑えていきますね。流木などに付いたものは取れにくいので、こちらで処理していきます。"}],
+ notes:[{t:"流木・葉に付くと除去困難 → ブラシ除去のほか木酢液の塗布も有効。"}],
+ refs:[{tag:"マニュアル",txt:"リン酸0.05ppm前後が目標。高いと黒髭コケ・藻類が発生。"}]},
+
+{id:10, cat:"kusa",
+ q:["コケ・苔が多い（貝を持ってきてほしい等）"],
+ alt:["コケが多い","苔","貝を多めに","ガラスが汚れる"],
+ ans:"次回メンテでコケ取り・<b>貝の追加</b>で対応。日々マグネットで軽く落としてもらうと保ちが良い。日当たりが強いと出やすく、頻度UPや別プランの提案も。",
+ scripts:[{l:"受け止め＋対処", t:"コケの件、ご連絡ありがとうございます。次回メンテでコケ取りと、貝（コケを食べてくれる生体）の追加を多めに対応しますね。気になるときは日々マグネットで軽く落としていただけると保ちが良くなります。日当たりが強い場所だと出やすいので、状態を見て頻度や別プランのご相談をすることもございます。"}],
+ refs:[{tag:"約款1-7",txt:"ガラス面のコケはコケ取りマグネットで落としていただく場合がある。"},{tag:"約款1-12",txt:"太陽光・間接光が多い場所はコケが大量に出る可能性があり、別プランの適用となる。"}]},
+
+{id:11, cat:"kusa",
+ q:["水が緑色になった（青水・アオコ）"],
+ alt:["水槽 緑","緑色","青水","アオコ"],
+ ans:"緑は<b>植物プランクトンの増殖</b>（光・栄養が多い）。水換え・遮光・照明時間短縮で対応。次回または早め訪問。",
+ scripts:[{l:"お客様への説明", t:"ご連絡ありがとうございます。水が緑色になってしまったんですね。これは光や栄養が多いときに植物プランクトンが増えて起こるもので、水換えと照明時間の調整で改善していきます。次回メンテで対応しますが、気になるようでしたら早めに伺いますね。"}]},
+
+{id:12, cat:"kusa",
+ q:["水が白く濁った（メンテ後など）"],
+ alt:["白濁","濁っている","にごり"],
+ ans:"バクテリアの一時的なバランス崩れ等で濁ることがある。<b>エアー確保＋水換え</b>で対応。魚の鼻上げ等を伴う場合は緊急。",
+ scripts:[{l:"お客様への説明", t:"ご連絡ありがとうございます。水が白く濁ってしまったんですね。メンテ後やお水のバランスが一時的に崩れたときに起こることがあります。エアー（泡）が出ているか確認いただけますか。改善しない・お魚が苦しそうな場合はすぐに伺います。"}],
+ esc:"白濁＋魚の鼻上げ／死は水質悪化のサイン → 緊急、リーダーに相談。"},
+
+{id:13, cat:"kusa",
+ q:["異臭がする"],
+ alt:["臭い","におい","くさい"],
+ ans:"水質悪化や、見えない所での生体・餌の腐敗のサイン。状況確認し<b>早めに訪問</b>。魚の死を伴う場合は緊急。",
+ scripts:[{l:"お客様への説明", t:"ご連絡ありがとうございます。水槽から臭いがするのですね。水質の悪化や、見えないところで生体や餌が傷んでいる可能性があります。お魚の様子はいかがですか？ 早めに伺って確認・水換えをさせていただきます。"}],
+ esc:"異臭＋複数死 → 緊急、リーダーに相談。"},
+
+{id:14, cat:"kusa",
+ q:["タニシ・巻貝が大量発生"],
+ alt:["巻貝 増えた","タニシ","スネール"],
+ ans:"巻貝が増えたら、次回メンテで<b>貝対策（トーマシー等）や除去</b>で対応。餌のあげ過ぎでも増えやすい。",
+ scripts:[{l:"お客様への説明", t:"ご連絡ありがとうございます。巻貝が増えてしまったんですね。次回メンテで、貝を食べる生体を入れる・取り除く等の対策をします。餌のあげ過ぎでも増えやすいので、量はこちらで調整しますね。"}]},
+
+{id:15, cat:"kusa",
+ q:["クリプトの葉が透明に溶けた"],
+ alt:["クリプト溶け","水草 溶ける","葉が溶けた"],
+ ans:"環境変化による<b>「クリプト溶け」</b>。根が残っていれば<b>再生する</b>のでパニック不要。溶けた葉は即除去、<b>根茎は抜かない</b>、水流を確保。",
+ scripts:[{l:"お客様への説明", t:"クリプトの葉が溶けてしまったんですね。これは環境の変化でよく起こる「クリプト溶け」で、根が残っていれば再生しますのでご安心ください。溶けた葉だけ取り除いて、様子を見ていきますね。"}],
+ notes:[{do:1,t:"溶けた葉は感染防止のため<b>即除去</b>。根茎は抜かない（再生する）。"}]},
+
+{id:16, cat:"kusa",
+ q:["水質も光も完璧なのに水草が育たない（食害の可能性）"],
+ alt:["新芽 消える","魚が水草を食べる","食害"],
+ ans:"水質・光・肥料が完璧でも、<b>生体が新芽を食べている</b>ことがある。問題の生体を特定し、別水槽へ。",
+ scripts:[{l:"お客様への説明", t:"水質も光も問題ないのに新芽が消えてしまう場合、お魚やエビが水草の柔らかい新芽を食べている可能性があります。一度、どの生体が原因か確認して、必要であれば配置を見直させてください。"}],
+ notes:[{t:"<b>食害しやすい生体：</b>金魚（水草全般・完全に不向き）／ゴールデンセベラム／ゴールデンバルブ（ミクロソリウム新芽）／エンゼル（前景草）／コンゴーテトラ（ボルビティス新芽）／ゴールデンアップルスネール。"},{do:1,t:"エビは数を控えめに＋餌を十分に。"}]},
+
+{id:17, cat:"kusa",
+ q:["水草の目標値・チェックリスト（早見表）"],
+ alt:["pH TH リン酸 水温","水草 数値","水質 基準"],
+ ans:"トラブル時は順番に確認。<b>水温（28℃超えない）が最優先</b>、次に水流・根茎・カリウム。",
+ scripts:[{l:"目標値（コピー可）", t:"【水質目標値】\npH：6.0〜7.5（バリスネリアは7.0〜7.5）\nTH（全硬度）：50以下（理想30〜50）\nリン酸：0.05ppm前後\n水温：23〜25℃（28℃超えは致命的）\n\n【肥料】\nカリウム液肥：週1〜2回（最優先）\n微量元素液肥：週1回・少量\n窒素・リン：控えめ（魚の排泄物で十分）"}],
+ notes:[{do:1,t:"陰性水草は<b>水流で栄養供給</b>。根茎は<b>絶対に埋めない</b>。"},{t:"龍王石はpH・硬度が上がる → 溶岩石に。バリスネリアは弱アルカリ好みで別管理。"}]},
+
+// ───── 設備・機械 ─────
+{id:18, cat:"setsubi",
+ quote:[{n:"カミハタ Rio1100 水中ポンプ 22L/m",g:2930},{n:"カミハタ Rio1400 水中ポンプ 24L/m",g:3250},{n:"カミハタ Rio2500 水中ポンプ 34L/m",g:5900},{n:"カミハタ Rio3100 水中ポンプ 48L/m",g:8670},{n:"エーハイム コンパクトオン 1000",g:1960},{n:"REI-SEA P-425V（上部ろ過用）",g:18000}],
+ q:["ろ過器・ポンプが止まった／回っていない"],
+ alt:["ポンプ 止まった","ろ過 動かない","酸素ポンプ","循環していない"],
+ ans:"酸素・ろ過が止まると<b>魚の命に直結</b>。コンセント・水循環を確認、止まっているなら<b>至急訪問</b>。空回りしている場合はその機械の電源を切ってもらう。",
+ scripts:[{l:"確認＋至急対応", t:"ご連絡ありがとうございます。ポンプ（ろ過）が止まっているのですね。お魚にとって大事な部分なので、すぐ確認させてください。\nコンセントが抜けていないか、異音がしないか見ていただけますか。水が循環していない場合は、まずその機械の電源を切っていただき、至急伺って対応します。お魚が水面でパクパクしている場合はお知らせください。"}],
+ notes:[{t:"酸素ポンプの停止は魚が死ぬ → 最優先で訪問。"}],
+ refs:[{tag:"約款1-6",txt:"ろ過器・ヒーターは常時通電。ただし水が循環していない・露出した場合は直ちに電源を切る。"}],
+ esc:"復旧できない・魚が弱っている → リーダーに即連絡（代打手配）。"},
+
+{id:19, cat:"setsubi",
+ q:["エアー（泡）が出ない"],
+ alt:["泡が出ない","ぶくぶく 出ない","エアレーション","空気が出ない"],
+ ans:"エアー停止は<b>酸欠の恐れ</b>。電源・チューブの外れ・ポンプを確認。出ないなら早め訪問。魚の鼻上げは緊急。",
+ scripts:[{l:"確認＋対応", t:"ご連絡ありがとうございます。エアー（泡）が出なくなったのですね。お魚の酸素に関わるので確認させてください。\nエアーポンプの電源が入っているか、チューブが外れていないか見ていただけますか。直らない場合は早めに伺います。お魚が水面で口をパクパクしている場合はお知らせください。"}],
+ esc:"魚が鼻上げ（酸欠サイン） → 緊急、リーダーに相談。"},
+
+{id:20, cat:"setsubi",
+ q:["水漏れしている"],
+ alt:["水が漏れる","ホースから水","水浸し","溢れる"],
+ ans:"まず<b>安全のため漏れ箇所の電源を切ってもらう</b> → 至急訪問。床・周辺の拭き上げもお願い。漏電の危険があるため電源OFFを最優先。",
+ scripts:[{l:"安全の一次対応", t:"ご連絡ありがとうございます。水が漏れているのですね。まず安全のため、漏れている付近の機械の電源を一度切っていただけますか。床が濡れている場合は拭いていただけると助かります。至急、伺って原因を確認します。"}],
+ notes:[{t:"漏電・床への被害があるため、電源OFFを最優先で指示。"}],
+ refs:[{tag:"約款2-5",txt:"メンテ作業時の水漏れ・物損は弊社加入の請負生産物保険の範囲内で負担（多少の傷・不可抗力等は除く）。"},{tag:"約款2-17",txt:"撤去・移動後の床・周辺の修理補償はできかねる。"}],
+ esc:"止まらない水漏れ → リーダーに即連絡（代打手配）。"},
+
+{id:21, cat:"setsubi",
+ q:["異音がする"],
+ alt:["変な音","音が鳴る","凄い音","うるさい"],
+ ans:"多くは<b>ポンプ・エアーの空気噛みや水位低下</b>が原因。水位・ポンプを確認。問題なければ次回調整、ひどければ訪問。",
+ scripts:[{l:"確認＋対応", t:"ご連絡ありがとうございます。いつもと違う音がするのですね。多くはポンプやエアーの空気の噛み込み、水位が下がっていることが原因です。水の量が減っていないか見ていただけますか。続くようでしたら伺って調整します。"}]},
+
+{id:22, cat:"setsubi",
+ quote:[{n:"ゼンスイ LED+600 マルチカラー",g:7800,u:1},{n:"Chihiros LED WRGB2 600 ブラック",g:26000},{n:"Chihiros LED WRGB2 900 ブラック",g:34000},{n:"ゼンスイ 水中マルチカラーLED 600",g:11000}],
+ q:["ライトが点滅・消えた／アダプター交換"],
+ alt:["ライト 点滅","電気がつかない 照明","アダプター 錆","ライト 消えた"],
+ ans:"ライト・アダプターの不具合。次回または早めに<b>部品交換</b>。アダプターの錆・断線は危険なので使用を控えてもらう。",
+ scripts:[{l:"確認＋対応", t:"ご連絡ありがとうございます。ライトが点滅（消えて）しまうのですね。ライトかアダプターの不具合が考えられます。アダプターに錆や傷みがある場合は、安全のため使用を控えていただき、次回または早めに部品を交換しに伺います。"}]},
+
+{id:23, cat:"setsubi",
+ q:["ライトの点灯時間を知りたい／設定"],
+ alt:["照明 時間","ライト 何時間","点灯 設定"],
+ ans:"点灯は<b>1日8〜10時間</b>が目安。長いとコケ、短いと水草が不調。残りは消して夜を感じさせる。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。ライトの点灯時間ですね。1日8〜10時間が目安です。長すぎるとコケが増え、短すぎると水草の元気がなくなります。残りの時間は消して、お魚や水草に夜を感じさせてあげてください。"}],
+ refs:[{tag:"約款1-3",txt:"ライトの照射時間は約9〜10時間の連続照射。残りは消して夜を感じさせる。"}]},
+
+{id:24, cat:"setsubi",
+ q:["ガラス蓋が落ちた／コケ取りマグネットが取れた"],
+ alt:["蓋 落ちた","マグネット 取れた","ガラス蓋","フタ 水槽の中"],
+ ans:"蓋やマグネットが水槽内に落ちた・外れた。<b>回収に伺う</b>。無理に手を入れて生体を傷つけない・手を切らないよう注意喚起。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。蓋（マグネット）が水槽の中に落ちてしまったのですね。無理に取ろうとするとお魚を驚かせたり、手を切る恐れがあるので、こちらで回収に伺います。お時間のご希望を教えてください。"}]},
+
+{id:25, cat:"setsubi",
+ q:["餌やり機・タイマーの不調／部品が落ちた"],
+ alt:["自動給餌 動かない","餌やり機 落ちた","タイマー 作動しない","給餌機"],
+ ans:"自動給餌機の作動不良や部品落下。<b>回収・再取り付けに伺う</b>。その間は手で少量を。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。自動給餌機（タイマー）の調子が悪いのですね。部品が水槽内に落ちている場合は回収し、再取り付けに伺います。それまでの間、お餌が出ていないようでしたら、少量を手であげていただいても大丈夫です（あげ過ぎにご注意ください）。"}]},
+
+{id:26, cat:"setsubi",
+ q:["機械が故障した（部品交換・修理費）"],
+ alt:["故障 修理費","部品交換 費用","壊れた 機械"],
+ ans:"部品交換・修理費は<b>基本お客様負担</b>だが、<b>保険加入なら無償範囲</b>がある。現地確認のうえ費用を<b>先に</b>案内。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。機械の故障ですね。確認して対応しますが、部品の交換や修理は、保険のご加入状況によって費用が変わります。現地で確認して、費用は先にお見積りをお伝えしますので、ご納得いただいてから進めますね。"}],
+ refs:[{tag:"約款2-4",txt:"機械・水槽の故障の部品交換・修理費は負担。保険加入時は機材5年・水槽本体/濾過槽1年まで無償（3万円以上は1年）。未加入は製品保証期間内。"}]},
+
+// ───── 環境・災害 ─────
+{id:27, cat:"saigai",
+ q:["地震のあと（こぼれ・石崩れ・点検）"],
+ alt:["地震 こぼれた","揺れた","石が崩れた","地震 水槽"],
+ ans:"揺れで<b>水がこぼれる・石やレイアウトが崩れる</b>ことがある。こぼれの拭き上げ協力をお願いし、ろ過の水位・機械を点検。被害があれば訪問。",
+ scripts:[{l:"地震のあと", t:"地震、大丈夫でしたか。揺れで水がこぼれていたり、中の石やレイアウトが崩れることがあります。フタ無し・縁無しの水槽は特にこぼれやすいので、もし溢れていたら拭き上げのご協力をお願いできますか（海水は濡れタオルで拭いてください）。ろ過の水が減っていないかも見ていただけると安心です。被害がありそうでしたら伺います。"}],
+ notes:[{t:"海水は塩ダレ注意。オールガラス・縁無し水槽は特に要確認。"}],
+ esc:"広域地震時は全体連絡に従い、被害現場をリーダーへ集約。"},
+
+{id:28, cat:"saigai",
+ q:["停電のあと（電気がつかない・復電後の確認）"],
+ alt:["停電 電気つかない","ブレーカー","復電","ビル 停電"],
+ ans:"停電・復電後にライト／ヒーター／ろ過が動かないことがある。コンセント・ブレーカーを確認し、<b>各機械が動いているか点検</b>。動かなければ訪問。ろ過とヒーターが特に大事。",
+ scripts:[{l:"停電のあと", t:"ご連絡ありがとうございます。停電のあと、電気がつかないのですね。まずコンセントとブレーカーを確認いただけますか。\n復電後は、ライト・ヒーター・ろ過（ポンプ）がきちんと動いているかが大事です。動いていない機械があれば教えてください、伺って確認します。お魚にとってはろ過とヒーターが特に大事です。"}],
+ notes:[{t:"ビルの計画停電・電気工事の予定がある場合は事前にご相談いただく。"}],
+ esc:"復電後もろ過／ヒーターが動かない・魚が弱っている → 緊急、リーダーに相談。"},
+
+{id:29, cat:"saigai",
+ quote:[{n:"ゼンスイ ZRmini",g:38500},{n:"ゼンスイ ZR-75E",g:42200},{n:"ゼンスイ ZR-130E",g:58200},{n:"ゼンスイ ZC-200α",g:57750},{n:"ゼンスイ ZTK-500",g:120000,u:1}],
+ q:["夏場の水温が高い・心配"],
+ alt:["水温 高い","夏 暑い","30度","クーラー ファン"],
+ ans:"水温は<b>24〜26℃</b>が目安、夏場30℃超で全滅の恐れ。クーラー送風・通気、水槽用ファン／クーラーを推奨。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。夏場の水温ですね。24〜26℃が目安で、30℃を超えるとお魚に危険です。お部屋のクーラーを水槽に向けて送風する・通気を良くするだけでも効果があります。それでも上がる場合は、水槽用のファンやクーラーの設置をおすすめしますので、ご相談ください。"}],
+ refs:[{tag:"約款1-5",txt:"水温は24〜26℃が理想。夏場は30℃以上に上昇し全滅する場合あり。"}]},
+
+// ───── 料金・支払 ─────
+{id:30, cat:"kane",
+ q:["請求書の内容を確認したい"],
+ alt:["請求書 確認","明細","何の料金"],
+ ans:"請求データを確認してから正確に説明。加算があれば内訳を案内。",
+ scripts:[{l:"受け止め＋確認", t:"請求書の件、ご確認ありがとうございます。〇月分の内容ですね。こちらで請求内容を確認して、改めて正確にご説明します。通常のメンテ料金に加えて、生体追加や移動などの分が加算されている場合がございます。内訳をメールでもお送りしますね。"}]},
+
+{id:31, cat:"kane",
+ q:["請求金額が違う・内訳を知りたい／二重請求"],
+ alt:["金額 違う","内訳","合計 相違","二重請求"],
+ ans:"その場で曖昧に答えず<b>確認してから</b>。二重請求・食い違いは経理＋担当で整理。",
+ scripts:[{l:"受け止め＋確認", t:"ご連絡ありがとうございます。金額が合わない（内訳を知りたい）とのこと、確認させてください。こちらで請求データを照合して、内訳を整理してご連絡します。行き違いがありましたら大変失礼しました。"}],
+ esc:"二重請求の疑い・食い違いが大きい → 経理＋担当で整理し、社内共有。"},
+
+{id:32, cat:"kane",
+ q:["請求書が届かない・再送してほしい"],
+ alt:["請求書 届かない","再送","郵送して","見えにくい"],
+ ans:"すぐ<b>再送</b>。裏写り等で見えにくい場合も再郵送。送付先を確認。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。請求書が届かない（見えにくい）とのこと、失礼しました。すぐに再送（郵送）いたします。念のため送付先のご住所を確認させてください。"}]},
+
+{id:33, cat:"kane",
+ q:["支払い方法を変えたい（カード等）／年払い・先払い"],
+ alt:["カード決済","年払い","先払い","支払方法 変更"],
+ ans:"方法変更は<b>経理確認のうえ折り返し</b>。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。お支払い方法（年払い・先払い・カード等）のご相談ですね。対応できるか経理担当に確認して折り返します。少々お時間をいただけますか。"}]},
+
+{id:34, cat:"kane",
+ q:["振込がまだ・支払期限／未納・振込不足"],
+ alt:["振込 まだ","支払期限","未納","足りないと言われた"],
+ ans:"催促口調で決めつけず、<b>行き違いの可能性</b>を前提に入金状況を確認。",
+ scripts:[{l:"受け止め＋確認", t:"ご連絡ありがとうございます。お支払いの件ですね。こちらで入金状況を確認して、どの月の分が未着かを整理してご連絡します。行き違いでしたら大変失礼しました。"}],
+ notes:[{t:"「滞納です」と決めつけない。まず事実確認から。"}],
+ refs:[{tag:"約款3-2",txt:"振込は料金発生（請求書の日付）より翌月末日以内。手数料は契約者負担。"}],
+ esc:"催促・条件変更は経理経由。回収・所有権の話は経営判断。"},
+
+{id:35, cat:"kane",
+ q:["領収書・支払証明書がほしい"],
+ alt:["領収書","支払証明書","領収書 金額違う"],
+ ans:"経理に確認のうえ発行・送付。仮領収と正式で金額が違う等は照合。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。領収書（支払証明書）の件ですね。経理に確認して発行・お送りします。金額や宛名のご希望があれば教えてください。"}]},
+
+// ───── 契約・解約 ─────
+{id:36, cat:"keiyaku",
+ q:["リース料はいつまで払うのか"],
+ alt:["リース いつまで","リース 期間","まだ払う"],
+ ans:"リースは<b>契約期間（例：5年）満了まで</b>支払い。期間・残りを契約で確認して正確に案内。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。リース料のお支払い期間ですね。リースは契約期間（〇年）が満了するまでのお支払いになります。こちらで〇〇様のご契約期間と残りを確認して、正確にご案内しますね。"}],
+ refs:[{tag:"約款2-9",txt:"リースの場合は途中解約でもリース残高満額の支払いとなる。"}],
+ esc:"期間満了・名義／不動産が絡む場合はリーダー・経理に相談。"},
+
+{id:37, cat:"keiyaku",
+ q:["解約したい・途中解約の違約金"],
+ alt:["解約したい","やめたい","違約金","最短 解約"],
+ ans:"まず<b>理由を聴く</b>。不満があれば改善提案を先に。事実（満期・30日前・途中解約費用）はやさしく正確に。気持ちが固まっている方には「最後まで気持ちよく」を優先。",
+ scripts:[
+  {l:"まず理由を聴く", t:"これまでご利用いただきありがとうございます。差し支えなければ、解約をお考えになった理由を教えていただけますか。\nもしご不満な点があれば、内容の見直しでお応えできることもあります。一度社内で相談させていただいてもよろしいでしょうか。"},
+  {l:"事実説明（やさしく）", t:"ご契約は〇年〇月が満期で、その30日前までにお申し出いただく形になっています。途中解約の場合のお手続き・費用も、こちらで正確に計算してご案内しますね。"}],
+ notes:[{t:"違約金の話から入らない。まず理由を聴き、不満なら改善提案を先に。"},{t:"強い引き止めはしない。気持ちが固まっている方には「最後まで気持ちよく」を優先。"}],
+ refs:[{tag:"約款2-10",txt:"契約満了日にて自動更新（1年）。解約は満了日の30日前までに申し出。"},{tag:"約款2-9",txt:"途中解約は残メンテ回数×料金と保険料の50%。リースは残高満額。"}],
+ esc:"解約の意向が出たら必ずリーダーに相談。違約金・減額の判断は上で。"},
+
+{id:38, cat:"keiyaku",
+ q:["撤去したい・撤去費用"],
+ alt:["撤去 費用","引き上げ","水槽 いらない"],
+ ans:"撤去は<b>別途費用</b>。更新タイミング以外の撤去は<b>撤去作業費（1回分の月額）</b>。時期・希望日を確認し見積を先に。解約に直結するのでリーダーへ。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。撤去のご相談ですね。撤去は別途お見積りになります（更新のタイミング以外の撤去は、撤去作業費として1回分の月額がかかります）。ご希望の時期を教えていただければ、費用を先にお伝えします。"}],
+ refs:[{tag:"契約書",txt:"更新タイミング以外の撤去は、撤去作業費として1回分の月額がかかる。"},{tag:"約款2-17",txt:"撤去・移動後の床・周辺の補償はできかねる。"}],
+ esc:"撤去＝解約に直結。必ずリーダーに相談。"},
+
+{id:39, cat:"keiyaku",
+ q:["水槽を移動したい・場所を変えたい"],
+ alt:["移動 費用","場所 変えたい","移設","移転"],
+ ans:"移動は<b>別途見積</b>。現地確認のうえ費用を先に。移動後の床補償は不可。",
+ scripts:[{l:"お客様への案内", t:"ご連絡ありがとうございます。水槽の移動ですね。移動先と希望日を教えていただけますか。作業内容によって別途お見積りになりますので、現地を確認して費用を先にお伝えします。"}],
+ refs:[{tag:"約款2-13",txt:"場所の異動・大掃除・大幅レイアウト変更・撤去は別途加算。"}]},
+
+{id:40, cat:"keiyaku",
+ q:["契約金額・契約期間を確認したい"],
+ alt:["契約 いくら","何年契約","契約内容 確認","いつまで契約"],
+ ans:"契約データを確認して<b>正確に</b>回答。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。ご契約の金額（期間）の確認ですね。こちらで〇〇様のご契約内容を確認して、正確にご案内します。少々お待ちください。"}]},
+
+// ───── 事務・依頼 ─────
+{id:41, cat:"jimu",
+ q:["メンテの日程・訪問・当月キャンセル"],
+ alt:["次回いつ","日程変更","早めに見て","キャンセル"],
+ ans:"次回予定を案内し、必要なら調整。当月キャンセルは<b>お客様都合か弊社都合か</b>を確認してから。",
+ scripts:[{l:"日程案内・変更", t:"次回メンテは〇月〇日頃を予定しています。ご都合いかがですか。早めに見てほしい場合は調整しますね。\n日程変更も承知しました。候補日で再調整し、当月分のお振り替えが可能かも確認しますね。"}],
+ notes:[{t:"キャンセル料を機械的に請求しない。お客様都合か弊社都合かを確認してから。"}],
+ refs:[{tag:"約款2-8",txt:"当月キャンセルは1回につきメンテ料金と保険料の50%（弊社都合は除く）。"}]},
+
+{id:42, cat:"jimu",
+ q:["見積がほしい（継続・新規・追加水槽）"],
+ alt:["見積","追加 水槽","継続 いくら","2台目"],
+ ans:"サイズ・設置場所・希望時期を伺い、<b>担当（営業）から案内</b>。納期2週間目安なら進捗をフォロー。",
+ scripts:[{l:"お客様への対応", t:"お見積りのご依頼ありがとうございます。サイズ・設置場所・ご希望の時期を伺って、担当（営業）からご案内します。継続のお見積りの場合は、現在のご契約内容を確認してご提示しますね。少しお時間をください。"}],
+ refs:[{tag:"約款2-15",txt:"2台目契約は契約書を省略し、1台目と同一条件。起点日は初請求月を1回目とする。"}],
+ esc:"見積・新規・継続提案は営業（リーダー）へ。"},
+
+{id:43, cat:"jimu",
+ q:["カタログがほしい（魚・水草）"],
+ alt:["カタログ","魚 一覧","水草 カタログ"],
+ ans:"担当より<b>魚／水草のカタログ</b>を送付。送付先を確認。",
+ scripts:[{l:"お客様への対応", t:"カタログのご希望ありがとうございます。魚／水草のカタログを担当よりお送りします。ご住所（送付先）を確認させてください。"}]},
+
+{id:44, cat:"jimu",
+ q:["名義変更・請求先／住所変更"],
+ alt:["送付先 変更","名義変更","住所変更","請求先"],
+ ans:"<b>復唱して確認</b>し、社内（経理）へ記録・反映。名義変更は新名義人へ自動引継ぎ。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。送付先（名義）の変更ですね。念のため復唱します、新しいご住所／宛名は〇〇ですね。次回請求分から反映します。"}],
+ notes:[{t:"口頭だけで完了としない。必ず社内（経理）へ記録・反映依頼まで。"}],
+ refs:[{tag:"約款2-16",txt:"名義変更は新名義人にそのまま自動引継ぎ。旧名義人は必ず新名義人へ引継ぎを。"}]},
+
+{id:45, cat:"jimu",
+ q:["担当者を教えて／担当を変えてほしい"],
+ alt:["担当 誰","担当 教えて","担当 変えて","担当変更"],
+ ans:"担当を確認して<b>折り返し</b>。担当変更の希望は<b>理由を伺いリーダーへ</b>（背景にトラブルがあることが多い）。",
+ scripts:[{l:"お客様への対応", t:"ご連絡ありがとうございます。ご担当の件ですね。確認して、担当よりご連絡を差し上げます。\n（担当変更のご希望の場合）ご不便をおかけして申し訳ありません。状況を伺って、より良い形になるよう社内で調整します。"}],
+ esc:"担当変更の希望・背景にトラブルがある場合はリーダーに相談。"},
+
+{id:46, cat:"jimu",
+ q:["クレームを対応スタッフに頼むとき（代打依頼ひな形）"],
+ alt:["代打 依頼","トラブル対応 依頼","スタッフに振る","ひな形"],
+ ans:"クレーム・トラブルが発生したら、以下の<b>8項目</b>を埋めて対応スタッフに依頼する。下のひな形をコピーして使う。",
+ scripts:[{l:"コピー用ひな形", t:"①現場名\n→\n\n②住所と(パーキング)の場所\n→\n\n③入れる時間\n→ 〇〇:〇〇〜〇〇:〇〇 / 〇〇:〇〇まで\n\n④水槽サイズ　種類\n→ 〇〇×△△×□□H、エーハイム水草 / オーバーフロー海水 等\n\n⑤かかる時間\n→ 〇時間程度\n\n⑥トラブル内容\n→ 〇〇の故障 / 〇〇から水漏れ / 爆死 等\n\n⑦やって欲しい作業\n→ フルメンテ / トラブル対処 / 〇〇の交換 等\n\n⑧今回の作業での支払い発生の有無（有りの場合は支払い方法）\n→ クレーム・トラブル対応系は基本「なし」。メンテの代打なら「有り」＋請求書／現金／クレジット を記載"}],
+ notes:[{t:"パーキングが複雑な場合は「個別で連絡します」と記載。"},{t:"支払い：クレーム・トラブル対応は基本なし。代打メンテは有り（方法を明記）。"}]},
+];
+
+// ───── RENDER ─────
+const COPY={}; let cid=0;
+const listEl=document.getElementById('list');
+const chipsEl=document.getElementById('chips');
+const qEl=document.getElementById('q');
+const clrEl=document.getElementById('clr');
+const cntEl=document.getElementById('cnt');
+const noEl=document.getElementById('nores');
+document.getElementById('cntN').textContent=D.length;
+let activeCat="all"; let pcat="水草"; let view="navi";
+
+function buildChips(){
+  chipsEl.innerHTML='';
+  if(view==='navi'){
+    const all=document.createElement('button');
+    all.className='chip'+(activeCat==='all'?' active':'');
+    if(activeCat==='all')all.style.background='var(--navy)';
+    all.textContent='すべて';
+    all.onclick=()=>{activeCat='all';buildChips();render();};
+    chipsEl.appendChild(all);
+    CATS.forEach(cat=>{
+      const b=document.createElement('button');
+      b.className='chip'+(activeCat===cat.id?' active':'');
+      if(activeCat===cat.id)b.style.background=cat.c;
+      b.innerHTML=`<span class="dot" style="background:${cat.c};"></span>${cat.name}`;
+      b.onclick=()=>{activeCat=cat.id;buildChips();render();};
+      chipsEl.appendChild(b);
+    });
+  }else{
+    PCATS.forEach(name=>{
+      const b=document.createElement('button');
+      b.className='chip'+(pcat===name?' active':'');
+      if(pcat===name)b.style.background='var(--warn)';
+      b.textContent=name;
+      b.onclick=()=>{pcat=name;qEl.value='';buildChips();render();};
+      chipsEl.appendChild(b);
+    });
+  }
+}
+function hl(t,q){if(!q)return t;try{return t.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<span class="hl">$1</span>');}catch(e){return t;}}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function matches(d,terms){
+  if(activeCat!=='all'&&d.cat!==activeCat)return false;
+  if(!terms.length)return true;
+  const hay=(d.q.join(' ')+' '+(d.alt||[]).join(' ')+' '+d.ans+' '+d.scripts.map(s=>s.t).join(' ')+' '+(d.notes||[]).map(n=>n.t).join(' ')).toLowerCase();
+  return terms.every(t=>hay.includes(t));
+}
+function quoteHtml(quote){
+  if(!quote||!quote.length)return '';
+  const rows=quote.map(p=>{
+    const t=teiji(p.g);
+    const up=p.u?'<span class="qt-up">値上げ</span>':'';
+    return `<div class="qt-row"><div class="qt-nm">${esc(p.n)}${up}</div><div class="qt-pr"><span class="qt-genka">原価 ¥${yen(p.g)}</span><br><span class="qt-teiji">¥${yen(t)}</span> <span class="qt-lbl">提示(税別)</span></div></div>`;
+  }).join('');
+  return `<div class="sec"><div class="sec-l"><span class="b" style="background:var(--warn);"></span>交換・買い替えの見積もり（税別）</div><div class="qt"><div class="qt-hd"><span>商品</span><span>原価 → 提示額（原価×1.2）</span></div>${rows}<div class="qt-note">提示額＝原価×1.2（20%上乗せ・税別、10円単位に切り上げ）。お客様には提示額でご案内します。金額は変動するため最終は見積もりタブ／契約でご確認ください。</div></div></div>`;
+}
+function renderNavi(){
+  const raw=qEl.value.trim(); const q=raw.toLowerCase();
+  const terms=q?q.split(/\s+/):[];
+  clrEl.classList.toggle('show',!!raw);
+  listEl.innerHTML=''; let shown=0;
+  D.forEach(d=>{
+    if(!matches(d,terms))return; shown++;
+    const col=CC[d.cat]; const catName=CATS.find(c=>c.id===d.cat).name;
+    const it=document.createElement('div'); it.className='item';
+    let scriptsHtml=d.scripts.map(s=>{const id='c'+(cid++);COPY[id]=s.t;return `<div class="script"><button class="copy-btn" data-c="${id}">📋 コピー</button><div class="script-l">${s.l}</div><div class="script-t">${hl(esc(s.t),raw)}</div></div>`;}).join('');
+    let notesHtml=(d.notes&&d.notes.length)?`<div class="sec"><div class="sec-l"><span class="b" style="background:var(--warn);"></span>注意点・コツ</div><div class="notes">${d.notes.map(n=>`<div class="note ${n.do?'do':''}"><span class="m">${n.do?'◎':'✕'}</span><span>${n.t}</span></div>`).join('')}</div></div>`:'';
+    let escHtml=d.esc?`<div class="sec"><div class="sec-l"><span class="b" style="background:#c0392b;"></span>こんな時はリーダーに相談</div><div class="esc"><span class="m">▲</span><span>${d.esc}</span></div></div>`:'';
+    let refsHtml=(d.refs&&d.refs.length)?`<button class="refs-toggle">根拠（約款・マニュアル）を見る ▾</button><div class="refs">${d.refs.map(r=>`<div class="ref"><span class="tag">${r.tag}</span>${r.txt}</div>`).join('')}</div>`:'';
+    let qtHtml=quoteHtml(d.quote);
+    let altHtml=(d.alt&&d.alt.length&&terms.length===0)?`<div class="alt">${d.alt.slice(0,3).map(a=>`<span class="alt-c">${a}</span>`).join('')}</div>`:'';
+    it.innerHTML=`
+      <div class="item-head">
+        <div class="qbar" style="background:${col};"></div>
+        <div class="item-main">
+          <span class="item-cat" style="color:${col};background:${col}1a;">${catName}</span>
+          <div class="item-q"><span class="quote">「</span>${hl(esc(d.q[0]),raw)}<span class="quote">」</span></div>
+          ${altHtml}
+        </div>
+        <span class="chev">▶</span>
+      </div>
+      <div class="detail">
+        <div class="sec"><div class="sec-l"><span class="b" style="background:var(--blue);"></span>こう返す</div><div class="ans">${d.ans}</div></div>
+        <div class="sec"><div class="sec-l"><span class="b" style="background:var(--teal);"></span>そのまま送れる（タップでコピー）</div>${scriptsHtml}</div>
+        ${notesHtml}${qtHtml}${escHtml}${refsHtml}
+      </div>`;
+    const head=it.querySelector('.item-head'); const det=it.querySelector('.detail'); const chev=it.querySelector('.chev');
+    head.onclick=()=>{const o=det.classList.toggle('open');chev.classList.toggle('open',o);};
+    if(terms.length){det.classList.add('open');chev.classList.add('open');}
+    const rt=it.querySelector('.refs-toggle');
+    if(rt){rt.onclick=(e)=>{e.stopPropagation();const r=rt.nextElementSibling;const o=r.classList.toggle('open');rt.textContent=(o?'根拠を閉じる ▴':'根拠（約款・マニュアル）を見る ▾');};}
+    it.querySelectorAll('.copy-btn').forEach(btn=>{btn.onclick=(e)=>{e.stopPropagation();doCopy(COPY[btn.dataset.c],btn);};});
+    listEl.appendChild(it);
+  });
+  cntEl.textContent=`${shown} 件のトピック`;
+  noEl.style.display=shown?'none':'block';
+}
+function renderMitsu(){
+  const raw=qEl.value.trim(); const q=raw.toLowerCase();
+  clrEl.classList.toggle('show',!!raw);
+  listEl.innerHTML='';
+  let head=`<div class="mitsu-note"><b>原価</b>＝仕入価格（税別）／<b>提示額</b>＝原価×1.2（20%上乗せ・税別、10円単位に切り上げ）。お客様には<b>提示額</b>でご案内します。</div>`;
+  listEl.innerHTML=head;
+  let list=PRODUCTS.filter(p=>{
+    if(q){return (p.n+' '+p.c).toLowerCase().includes(q);}
+    return p.c===pcat;
+  });
+  let shown=0;
+  list.forEach(p=>{
+    shown++;
+    const t=teiji(p.g);
+    const bk=p.bk?`<div class="pbk">${esc(p.bk)}</div>`:'';
+    const row=document.createElement('div'); row.className='prow';
+    row.innerHTML=`<span class="pcat">${p.c}</span><div class="pnm">${hl(esc(p.n),raw)}${bk}</div><div class="ppr"><div class="pg">原価 ¥${yen(p.g)}</div><div class="pt">¥${yen(t)}</div><div class="pl">提示(税別)</div></div>`;
+    listEl.appendChild(row);
+  });
+  cntEl.textContent=q?`${shown} 件（検索）`:`${pcat}：${shown} 件`;
+  noEl.style.display=shown?'none':'block';
+}
+function renderInfo(){
+  listEl.innerHTML='';
+  const COMP=[
+   {l:"会社名",v:"アクアリンク株式会社",big:1},
+   {l:"📍 本社",v:"〒111-0032 東京都台東区浅草3-36-9 小宮ビル2F",copy:"〒111-0032 東京都台東区浅草3-36-9 小宮ビル2F"},
+   {l:"🏛 ショールーム（予約制）",v:"東京都中央区銀座1-13-4 片桐ビルB1",copy:"東京都中央区銀座1-13-4 片桐ビルB1"},
+   {l:"📦 荷物の発送先",v:"〒270-0003 千葉県松戸市東平賀537",copy:"〒270-0003 千葉県松戸市東平賀537",hl:1},
+   {l:"🌐 ホームページ",v:"http://www.aqualink.tv",copy:"http://www.aqualink.tv"},
+   {l:"🏦 お振込先",v:"千葉興業銀行 小金支店\n普通 6168421 アクアリンク",copy:"千葉興業銀行 小金支店 普通 6168421 アクアリンク",hl:1},
+  ];
+  let html='<div class="info-card"><div class="info-name">アクアリンク株式会社</div><div class="info-tel"><a href="tel:0120579595">📞 TEL 0120-57-9595</a><a class="fax" href="tel:0120689595">FAX 0120-68-9595</a></div><div style="text-align:center;margin-top:8px;font-size:12px;color:var(--ink2);">携帯：090-4955-3577</div></div>';
+  COMP.forEach(c=>{
+    if(c.big)return;
+    const id='c'+(cid++); COPY[id]=c.copy||c.v;
+    const v=c.v.replace(/\n/g,'<br>');
+    html+=`<div class="info-card ${c.hl?'hl':''}"><div class="ic-l">${c.l}</div><div class="ic-row"><div class="ic-v">${v}</div>${c.copy?`<button class="ic-copy" data-c="${id}">📋 コピー</button>`:''}</div></div>`;
+  });
+  html+='<div class="info-card"><div class="ic-l">📞 電話・FAX・携帯</div><div class="ic-v">TEL 0120-57-9595<br>FAX 0120-68-9595<br>携帯 090-4955-3577</div></div>';
+  listEl.innerHTML=html;
+  listEl.querySelectorAll('.ic-copy').forEach(btn=>{btn.onclick=()=>{doCopy(COPY[btn.dataset.c],btn);};});
+  cntEl.textContent='';
+  noEl.style.display='none';
+}
+function render(){ if(view==='navi')renderNavi(); else if(view==='mitsu')renderMitsu(); else renderInfo(); }
+function doCopy(text,btn){
+  const ok=()=>{toast('コピーしました ✓');if(btn){const o=btn.innerHTML;btn.innerHTML='✓ 完了';btn.classList.add('done');setTimeout(()=>{btn.innerHTML=o;btn.classList.remove('done');},1400);}};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(ok).catch(()=>legacy(text,ok));}else legacy(text,ok);
+}
+function legacy(text,ok){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.top='-1000px';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');ok();}catch(e){toast('コピーできませんでした');}document.body.removeChild(ta);}
+let tt;
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1600);}
+qEl.addEventListener('input',()=>{if(view==='navi'&&qEl.value.trim()&&activeCat!=='all'){activeCat='all';buildChips();}render();});
+clrEl.onclick=()=>{qEl.value='';qEl.focus();render();};
+document.querySelectorAll('#vtog button').forEach(b=>{
+  b.onclick=()=>{
+    view=b.dataset.v;
+    document.querySelectorAll('#vtog button').forEach(x=>x.classList.toggle('on',x===b));
+    qEl.value='';
+    const isInfo=view==='info';
+    document.querySelector('.search').style.display=isInfo?'none':'';
+    chipsEl.style.display=isInfo?'none':'';
+    cntEl.style.display=isInfo?'none':'';
+    if(view==='navi'){qEl.placeholder='例：魚 死んだ / ポンプ 止まった / 停電 / 請求';document.querySelector('.hdr-cnt').innerHTML='<b>'+D.length+'</b><br>トピック';}
+    else if(view==='mitsu'){qEl.placeholder='商品名で検索：水草 / LED / クーラー / リバース';document.querySelector('.hdr-cnt').innerHTML='<b>'+PRODUCTS.length+'</b><br>商品';}
+    else{document.querySelector('.hdr-cnt').innerHTML='<b>📋</b><br>会社情報';}
+    if(!isInfo)buildChips();
+    render();
+  };
+});
+buildChips();render();
+</script>
+</body>
+</html>
